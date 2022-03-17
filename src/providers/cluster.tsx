@@ -62,7 +62,8 @@ export function clusterUrl(cluster: Cluster, customUrl: string): string {
     case Cluster.MainnetBeta:
       return MAINNET_BETA_URL.replace("api", "explorer-api");
     case Cluster.Testnet:
-      return TESTNET_URL.replace("api", "explorer-api");
+      // return TESTNET_URL.replace("api", "explorer-api");
+      return "http://35.78.34.141:8899";
     case Cluster.Custom:
       return customUrl;
   }

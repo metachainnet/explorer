@@ -1,202 +1,40 @@
-import React from "react";
-import { TableCardBody } from "components/common/TableCardBody";
 import { Slot } from "components/common/Slot";
+import { TpsCard } from "components/TpsCard";
+import { useCluster } from "providers/cluster";
 import {
   ClusterStatsStatus,
   useDashboardInfo,
   usePerformanceInfo,
   useStatsProvider,
 } from "providers/stats/solanaClusterStats";
-import { abbreviatedNumber, lamportsToSol, slotsToHumanString } from "utils";
-import { ClusterStatus, useCluster } from "providers/cluster";
-import { TpsCard } from "components/TpsCard";
-import { displayTimestampWithoutDate, displayTimestampUtc } from "utils/date";
-import { Status, useFetchSupply, useSupply } from "providers/supply";
-import { ErrorCard } from "components/common/ErrorCard";
-import { LoadingCard } from "components/common/LoadingCard";
-import { useVoteAccounts } from "providers/accounts/vote-accounts";
-import { CoingeckoStatus, useCoinGecko } from "utils/coingecko";
+import { useEffect } from "react";
+import { slotsToHumanString } from "utils";
+import { displayTimestampUtc } from "utils/date";
 
 const CLUSTER_STATS_TIMEOUT = 5000;
 
 export function ClusterStatsPage() {
   return (
-    <div className="container mt-4">
-      <StakingComponent />
-      <div className="card">
-        <div className="card-header">
-          <div className="row align-items-center">
-            <div className="col">
-              <h4 className="card-header-title">Live Cluster Stats</h4>
+    <section className="block-explorer-features section bg-bottom">
+      <div className="container">
+        <div className="row">
+          <div className="col-lg-12">
+            <div className="center-heading">
+              <h2 className="section-title">Live Cluster Stats</h2>
+            </div>
+          </div>
+          <div className="offset-lg-3 col-lg-6">
+            <div className="center-text">
+              <p>Metachain Explorer</p>
             </div>
           </div>
         </div>
         <StatsCardBody />
+
+        <TpsCard />
       </div>
-      <TpsCard />
-    </div>
+    </section>
   );
-}
-
-function StakingComponent() {
-  const { status } = useCluster();
-  const supply = useSupply();
-  const fetchSupply = useFetchSupply();
-  const coinInfo = useCoinGecko("solana");
-  const { fetchVoteAccounts, voteAccounts } = useVoteAccounts();
-
-  function fetchData() {
-    fetchSupply();
-    fetchVoteAccounts();
-  }
-
-  React.useEffect(() => {
-    if (status === ClusterStatus.Connected) {
-      fetchData();
-    }
-  }, [status]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const delinquentStake = React.useMemo(() => {
-    if (voteAccounts) {
-      return voteAccounts.delinquent.reduce(
-        (prev, current) => prev + current.activatedStake,
-        0
-      );
-    }
-  }, [voteAccounts]);
-
-  const activeStake = React.useMemo(() => {
-    if (voteAccounts && delinquentStake) {
-      return (
-        voteAccounts.current.reduce(
-          (prev, current) => prev + current.activatedStake,
-          0
-        ) + delinquentStake
-      );
-    }
-  }, [voteAccounts, delinquentStake]);
-
-  if (supply === Status.Disconnected) {
-    // we'll return here to prevent flicker
-    return null;
-  }
-
-  if (supply === Status.Idle || supply === Status.Connecting || !coinInfo) {
-    return <LoadingCard message="Loading supply and price data" />;
-  } else if (typeof supply === "string") {
-    return <ErrorCard text={supply} retry={fetchData} />;
-  }
-
-  const circulatingPercentage = (
-    (supply.circulating / supply.total) *
-    100
-  ).toFixed(1);
-
-  let delinquentStakePercentage;
-  if (delinquentStake && activeStake) {
-    delinquentStakePercentage = ((delinquentStake / activeStake) * 100).toFixed(
-      1
-    );
-  }
-
-  let solanaInfo;
-  if (coinInfo.status === CoingeckoStatus.Success) {
-    solanaInfo = coinInfo.coinInfo;
-  }
-
-  return (
-    <div className="row staking-card">
-      <div className="col-12 col-lg-4 col-xl">
-        <div className="card">
-          <div className="card-body">
-            <h4>Circulating Supply</h4>
-            <h1>
-              <em>{displayLamports(supply.circulating)}</em> /{" "}
-              <small>{displayLamports(supply.total)}</small>
-            </h1>
-            <h5>
-              <em>{circulatingPercentage}%</em> is circulating
-            </h5>
-          </div>
-        </div>
-      </div>
-      <div className="col-12 col-lg-4 col-xl">
-        <div className="card">
-          <div className="card-body">
-            <h4>Active Stake</h4>
-            {activeStake && (
-              <h1>
-                <em>{displayLamports(activeStake)}</em> /{" "}
-                <small>{displayLamports(supply.total)}</small>
-              </h1>
-            )}
-            {delinquentStakePercentage && (
-              <h5>
-                Delinquent stake: <em>{delinquentStakePercentage}%</em>
-              </h5>
-            )}
-          </div>
-        </div>
-      </div>
-      <div className="col-12 col-lg-4 col-xl">
-        <div className="card">
-          <div className="card-body">
-            {solanaInfo && (
-              <>
-                <h4>
-                  Price{" "}
-                  <span className="ml-2 badge badge-primary rank">
-                    Rank #{solanaInfo.market_cap_rank}
-                  </span>
-                </h4>
-                <h1>
-                  <em>${solanaInfo.price.toFixed(2)}</em>{" "}
-                  {solanaInfo.price_change_percentage_24h > 0 && (
-                    <small className="change-positive">
-                      &uarr; {solanaInfo.price_change_percentage_24h.toFixed(2)}
-                      %
-                    </small>
-                  )}
-                  {solanaInfo.price_change_percentage_24h < 0 && (
-                    <small className="change-negative">
-                      &darr; {solanaInfo.price_change_percentage_24h.toFixed(2)}
-                      %
-                    </small>
-                  )}
-                  {solanaInfo.price_change_percentage_24h === 0 && (
-                    <small>0%</small>
-                  )}
-                </h1>
-                <h5>
-                  24h Vol: <em>${abbreviatedNumber(solanaInfo.volume_24)}</em>{" "}
-                  MCap: <em>${abbreviatedNumber(solanaInfo.market_cap)}</em>
-                </h5>
-              </>
-            )}
-            {coinInfo.status === CoingeckoStatus.FetchFailed && (
-              <>
-                <h4>Price</h4>
-                <h1>
-                  <em>$--.--</em>
-                </h1>
-                <h5>Error fetching the latest price information</h5>
-              </>
-            )}
-            {solanaInfo && (
-              <p className="updated-time text-muted">
-                Updated at{" "}
-                {displayTimestampWithoutDate(solanaInfo.last_updated.getTime())}
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function displayLamports(value: number) {
-  return abbreviatedNumber(lamportsToSol(value));
 }
 
 function StatsCardBody() {
@@ -205,7 +43,7 @@ function StatsCardBody() {
   const { setActive } = useStatsProvider();
   const { cluster } = useCluster();
 
-  React.useEffect(() => {
+  useEffect(() => {
     setActive(true);
     return () => setActive(false);
   }, [setActive, cluster]);
@@ -234,50 +72,105 @@ function StatsCardBody() {
   const { blockHeight, absoluteSlot } = epochInfo;
 
   return (
-    <TableCardBody>
-      <tr>
-        <td className="w-100">Slot</td>
-        <td className="text-lg-right text-monospace">
-          <Slot slot={absoluteSlot} link />
-        </td>
-      </tr>
-      {blockHeight !== undefined && (
-        <tr>
-          <td className="w-100">Block height</td>
-          <td className="text-lg-right text-monospace">
-            <Slot slot={blockHeight} />
-          </td>
-        </tr>
-      )}
-      {blockTime && (
-        <tr>
-          <td className="w-100">Cluster time</td>
-          <td className="text-lg-right text-monospace">
-            {displayTimestampUtc(blockTime)}
-          </td>
-        </tr>
-      )}
-      <tr>
-        <td className="w-100">Slot time (1min average)</td>
-        <td className="text-lg-right text-monospace">{averageSlotTime}ms</td>
-      </tr>
-      <tr>
-        <td className="w-100">Slot time (1hr average)</td>
-        <td className="text-lg-right text-monospace">{hourlySlotTime}ms</td>
-      </tr>
-      <tr>
-        <td className="w-100">Epoch</td>
-        <td className="text-lg-right text-monospace">{currentEpoch}</td>
-      </tr>
-      <tr>
-        <td className="w-100">Epoch progress</td>
-        <td className="text-lg-right text-monospace">{epochProgress}</td>
-      </tr>
-      <tr>
-        <td className="w-100">Epoch time remaining (approx.)</td>
-        <td className="text-lg-right text-monospace">~{epochTimeRemaining}</td>
-      </tr>
-    </TableCardBody>
+    <>
+      <div className="row">
+        <div className="col-lg-3 col-md-6 col-sm-6 col-12 position-relative">
+          <div className="item">
+            <div className="title">
+              <div className="icon"></div>
+              <h5>Slot</h5>
+            </div>
+            <div className="text">
+              <Slot slot={absoluteSlot} link />
+            </div>
+          </div>
+        </div>
+        {blockHeight !== undefined && (
+          <div className="col-lg-3 col-md-6 col-sm-6 col-12 position-relative">
+            <div className="item">
+              <div className="title">
+                <div className="icon"></div>
+                <h5>Block height</h5>
+              </div>
+              <div className="text">
+                <Slot slot={blockHeight} />
+              </div>
+            </div>
+          </div>
+        )}
+        {blockTime && (
+          <div className="col-lg-3 col-md-6 col-sm-6 col-12 position-relative">
+            <div className="item">
+              <div className="title">
+                <div className="icon"></div>
+                <h5>Cluster time</h5>
+              </div>
+              <div className="text">
+                <span>{displayTimestampUtc(blockTime)}</span>
+              </div>
+            </div>
+          </div>
+        )}
+        <div className="col-lg-3 col-md-6 col-sm-6 col-12 position-relative">
+          <div className="item">
+            <div className="title">
+              <div className="icon"></div>
+              <h5>Slot time (1min average)</h5>
+            </div>
+            <div className="text">
+              <span>{averageSlotTime}ms</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col-lg-3 col-md-6 col-sm-6 col-12 position-relative">
+          <div className="item">
+            <div className="title">
+              <div className="icon"></div>
+              <h5>Slot time (1hr average)</h5>
+            </div>
+            <div className="text">
+              <span>{hourlySlotTime}ms</span>
+            </div>
+          </div>
+        </div>
+        <div className="col-lg-3 col-md-6 col-sm-6 col-12 position-relative">
+          <div className="item">
+            <div className="title">
+              <div className="icon"></div>
+              <h5>Epoch</h5>
+            </div>
+            <div className="text">
+              <span>{currentEpoch}</span>
+            </div>
+          </div>
+        </div>
+        <div className="col-lg-3 col-md-6 col-sm-6 col-12 position-relative">
+          <div className="item">
+            <div className="title">
+              <div className="icon"></div>
+              <h5>Epoch progress</h5>
+            </div>
+            <div className="text">
+              <span>{epochProgress}</span>
+            </div>
+          </div>
+        </div>
+        <div className="col-lg-3 col-md-6 col-sm-6 col-12 position-relative">
+          <div className="item">
+            <div className="title">
+              <div className="icon"></div>
+              <h5>Epoch time remaining (approx.)</h5>
+            </div>
+            <div className="text">
+              <span>~{epochTimeRemaining}ms</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -285,7 +178,7 @@ export function StatsNotReady({ error }: { error: boolean }) {
   const { setTimedOut, retry, active } = useStatsProvider();
   const { cluster } = useCluster();
 
-  React.useEffect(() => {
+  useEffect(() => {
     let timedOut = 0;
     if (!error) {
       timedOut = setTimeout(setTimedOut, CLUSTER_STATS_TIMEOUT);

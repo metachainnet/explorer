@@ -1,6 +1,5 @@
-import React from "react";
-import { TopAccountsCard } from "components/TopAccountsCard";
 import { SupplyCard } from "components/SupplyCard";
+import { TopAccountsCard } from "components/TopAccountsCard";
 
 export function SupplyPage() {
   return (

@@ -1,0 +1,56 @@
+/* ----------------------------------------------------------------------------------------
+Template: Arda - Bitcoin and Cryptocurrency ICO HTML Template
+Version: 1.4.0
+Author: tempload - support@tempload.com
+ -----------------------------------------------------------------------------------------*/
+
+/* ---------------------------------------------
+Table of contents
+------------------------------------------------
+01. font & reset css
+02. pre-loader
+03. global styles
+04. buttons
+05. token box
+06. header
+07. welcome area
+08. services
+09. roadmap
+10. team
+11. parallax
+12. faq
+13. block explorer
+14. footer & contact
+--------------------------------------------- */
+
+@import 'theme-blue'; 
+
+@import 'mixins';
+
+@import 'reset';
+
+@import 'loader';
+
+@import 'global';
+
+@import 'buttons';
+
+@import 'token-box';
+
+@import 'header';
+
+@import 'welcome';
+
+@import 'services';
+
+@import 'roadmap';
+
+@import 'team';
+
+@import 'parallax';
+
+@import 'faq';
+
+@import 'block-explorer';
+
+@import 'footer';

@@ -1,57 +1,88 @@
-import React from "react";
-// import Logo from "img/logos-solana/dark-explorer-logo.svg";
-import Logo from "img/logos-solana/M2_logo.png";
-import { clusterPath } from "utils/url";
+import Logo from "images/logos/M2_logo.png";
 import { Link, NavLink } from "react-router-dom";
-import { ClusterStatusButton } from "components/ClusterStatusButton";
+import { clusterPath } from "utils/url";
 
 export function Navbar() {
-  // TODO: use `collapsing` to animate collapsible navbar
-  const [collapse, setCollapse] = React.useState(false);
-
+  // TODO KBT : Cluster Modal 연결
   return (
-    <nav className="navbar navbar-expand-md navbar-light">
+    <header className="header-area">
       <div className="container">
-        <Link to={clusterPath("/")}>
-          <img src={Logo} width="50" alt="Solana Explorer" />
-        </Link>
+        <div className="row">
+          <div className="col-12 position-relative">
+            <nav className="main-nav">
+              <Link to={clusterPath("/")} className="logo">
+                <img
+                  src={Logo}
+                  className="light-logo"
+                  alt="Metachainnet"
+                  width="29"
+                />
+                <img
+                  src={Logo}
+                  className="dark-logo"
+                  alt="Metachainnet"
+                  width="29"
+                />
+              </Link>
 
-        <button
-          className="navbar-toggler"
-          type="button"
-          onClick={() => setCollapse((value) => !value)}
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
+              {/* <div className="lang">
+                <div className="selected">
+                  <img src={LanguageIcon_EN} alt="Change Language To EN" />
+                  <i className="fa fa-angle-down"></i>
+                </div>
+                <ul className="flag-list">
+                  <li>
+                    <Link to={clusterPath("/")}>
+                      <img src={LanguageIcon_EN} alt="Change Language To EN" />
+                      <span>EN</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to={clusterPath("/")}>
+                      <img src={LanguageIcon_RU} alt="Change Language To RU" />
+                      <span>RU</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to={clusterPath("/")}>
+                      <img src={LanguageIcon_BR} alt="Change Language To BR" />
+                      <span>BR</span>
+                    </Link>
+                  </li>
+                </ul>
+              </div> */}
 
-        <div
-          className={`collapse navbar-collapse ml-auto mr-4 ${
-            collapse ? "show" : ""
-          }`}
-        >
-          <ul className="navbar-nav mr-auto">
-            <li className="nav-item">
-              <NavLink className="nav-link" to={clusterPath("/")} exact>
-                Cluster Stats
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to={clusterPath("/supply")}>
-                Supply
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to={clusterPath("/tx/inspector")}>
-                Inspector
-              </NavLink>
-            </li>
-          </ul>
-        </div>
-
-        <div className="d-none d-md-block">
-          <ClusterStatusButton />
+              <ul className="nav">
+                <li>
+                  <NavLink to={clusterPath("/")} exact>
+                    Home
+                  </NavLink>
+                  {/* <a href="blue-block-explorer.html">BLOCKCHAIN HOME</a> */}
+                </li>
+                <li>
+                  <NavLink to={clusterPath("/supply")}>Blocks</NavLink>
+                </li>
+                <li>
+                  <NavLink to={clusterPath("/tx/inspector")}>
+                    Transactions
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    className="btn-nav-box"
+                    to={clusterPath("/tx/inspector")}
+                  >
+                    Testnet
+                  </NavLink>
+                </li>
+              </ul>
+              <Link className="menu-trigger" to="">
+                <span>Menu</span>
+              </Link>
+            </nav>
+          </div>
         </div>
       </div>
-    </nav>
+    </header>
   );
 }

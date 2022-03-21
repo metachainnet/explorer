@@ -1,25 +1,33 @@
-import React from "react";
+import { ChartOptions, ChartTooltipModel } from "chart.js";
+import classNames from "classnames";
+import { StatsNotReady } from "pages/ClusterStatsPage";
+import {
+  ClusterStatsStatus,
+  PERF_UPDATE_SEC,
+  usePerformanceInfo,
+} from "providers/stats/solanaClusterStats";
+import { PerformanceInfo } from "providers/stats/solanaPerformanceInfo";
+import React, { useRef } from "react";
 import { Bar } from "react-chartjs-2";
 import CountUp from "react-countup";
-import {
-  usePerformanceInfo,
-  PERF_UPDATE_SEC,
-  ClusterStatsStatus,
-} from "providers/stats/solanaClusterStats";
-import classNames from "classnames";
-import { TableCardBody } from "components/common/TableCardBody";
-import { ChartOptions, ChartTooltipModel } from "chart.js";
-import { PerformanceInfo } from "providers/stats/solanaPerformanceInfo";
-import { StatsNotReady } from "pages/ClusterStatsPage";
 
 export function TpsCard() {
   return (
-    <div className="card">
-      <div className="card-header">
-        <h4 className="card-header-title">Live Transaction Stats</h4>
+    <>
+      <div className="row">
+        <div className="col-lg-12">
+          <div className="center-heading">
+            <h2 className="section-title">Live Transaction Stats</h2>
+          </div>
+        </div>
+      </div>
+      <div className="offset-lg-3 col-lg-6">
+        <div className="center-text">
+          <p></p>
+        </div>
       </div>
       <TpsCardBody />
-    </div>
+    </>
   );
 }
 
@@ -119,7 +127,7 @@ const CHART_OPTIONS = (historyMaxTps: number): ChartOptions => {
           ticks: {
             stepSize: 100,
             fontSize: 10,
-            fontColor: "#EEE",
+            fontColor: "#3b566e;",
             beginAtZero: true,
             display: true,
             suggestedMax: historyMaxTps,
@@ -169,16 +177,30 @@ function TpsBarChart({ performanceInfo }: TpsBarChartProps) {
 
   return (
     <>
-      <TableCardBody>
-        <tr>
-          <td className="w-100">Transaction count</td>
-          <td className="text-lg-right text-monospace">{transactionCount} </td>
-        </tr>
-        <tr>
-          <td className="w-100">Transactions per second (TPS)</td>
-          <td className="text-lg-right text-monospace">{averageTps} </td>
-        </tr>
-      </TableCardBody>
+      <div className="row">
+        <div className="col-lg-3 col-md-6 col-sm-6 col-12 position-relative">
+          <div className="item">
+            <div className="title">
+              <div className="icon"></div>
+              <h5>Transaction count</h5>
+            </div>
+            <div className="text">
+              <span>{transactionCount}</span>
+            </div>
+          </div>
+        </div>
+        <div className="col-lg-3 col-md-6 col-sm-6 col-12 position-relative">
+          <div className="item">
+            <div className="title">
+              <div className="icon"></div>
+              <h5>Transactions per second (TPS)</h5>
+            </div>
+            <div className="text">
+              <span>{averageTps}</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <hr className="my-0" />
 
@@ -217,8 +239,8 @@ function TpsBarChart({ performanceInfo }: TpsBarChartProps) {
 }
 
 function AnimatedTransactionCount({ info }: { info: PerformanceInfo }) {
-  const txCountRef = React.useRef(0);
-  const countUpRef = React.useRef({ start: 0, period: 0, lastUpdate: 0 });
+  const txCountRef = useRef(0);
+  const countUpRef = useRef({ start: 0, period: 0, lastUpdate: 0 });
   const countUp = countUpRef.current;
 
   const { transactionCount: txCount, avgTps } = info;

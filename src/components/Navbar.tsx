@@ -68,6 +68,9 @@ export function Navbar() {
                   </NavLink>
                 </li>
                 <li>
+                  <NavLink to={clusterPath("/tx/inspector")}>Accounts</NavLink>
+                </li>
+                <li>
                   <NavLink
                     className="btn-nav-box"
                     to={clusterPath("/tx/inspector")}

@@ -1,4 +1,4 @@
-import React from "react";
+import { useMemo, useState } from "react";
 import { BlockResponse, PublicKey } from "@solana/web3.js";
 import { Address } from "components/common/Address";
 
@@ -10,10 +10,10 @@ type AccountStats = {
 const PAGE_SIZE = 25;
 
 export function BlockAccountsCard({ block }: { block: BlockResponse }) {
-  const [numDisplayed, setNumDisplayed] = React.useState(10);
+  const [numDisplayed, setNumDisplayed] = useState(10);
   const totalTransactions = block.transactions.length;
 
-  const accountStats = React.useMemo(() => {
+  const accountStats = useMemo(() => {
     const statsMap = new Map<string, AccountStats>();
     block.transactions.forEach((tx) => {
       const message = tx.transaction.message;
@@ -53,59 +53,63 @@ export function BlockAccountsCard({ block }: { block: BlockResponse }) {
   }, [block]);
 
   return (
-    <div className="card">
-      <div className="card-header align-items-center">
-        <h3 className="card-header-title">Block Account Usage</h3>
-      </div>
+    <>
+      <div className="row">
+        <div className="col-lg-12">
+          <div className="table-responsive">
+            <table className="table table-striped table-latests caption-top">
+              <caption>Block Account Usage</caption>
+              <thead>
+                <tr>
+                  <th>Address</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>New Balance</th>
+                  <th>Percent Change</th>
+                </tr>
+              </thead>
+              <tbody>
+                {accountStats
+                  .slice(0, numDisplayed)
+                  .map(([address, { writes, reads }]) => {
+                    return (
+                      <tr key={address}>
+                        <td>
+                          <Address pubkey={new PublicKey(address)} link />
+                        </td>
+                        <td>{writes}</td>
+                        <td>{reads}</td>
+                        <td>{writes + reads}</td>
+                        <td>
+                          {(
+                            (100 * (writes + reads)) /
+                            totalTransactions
+                          ).toFixed(2)}
+                          %
+                        </td>
+                      </tr>
+                    );
+                  })}
 
-      <div className="table-responsive mb-0">
-        <table className="table table-sm table-nowrap card-table">
-          <thead>
-            <tr>
-              <th className="text-muted">Account</th>
-              <th className="text-muted">Read-Write Count</th>
-              <th className="text-muted">Read-Only Count</th>
-              <th className="text-muted">Total Count</th>
-              <th className="text-muted">% of Transactions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {accountStats
-              .slice(0, numDisplayed)
-              .map(([address, { writes, reads }]) => {
-                return (
-                  <tr key={address}>
-                    <td>
-                      <Address pubkey={new PublicKey(address)} link />
-                    </td>
-                    <td>{writes}</td>
-                    <td>{reads}</td>
-                    <td>{writes + reads}</td>
-                    <td>
-                      {((100 * (writes + reads)) / totalTransactions).toFixed(
-                        2
-                      )}
-                      %
+                {accountStats.length > numDisplayed && (
+                  <tr>
+                    <td colSpan={5}>
+                      <button
+                        className="btn btn-primary w-100"
+                        onClick={() =>
+                          setNumDisplayed((displayed) => displayed + PAGE_SIZE)
+                        }
+                      >
+                        Load More
+                      </button>
                     </td>
                   </tr>
-                );
-              })}
-          </tbody>
-        </table>
-      </div>
-
-      {accountStats.length > numDisplayed && (
-        <div className="card-footer">
-          <button
-            className="btn btn-primary w-100"
-            onClick={() =>
-              setNumDisplayed((displayed) => displayed + PAGE_SIZE)
-            }
-          >
-            Load More
-          </button>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 }

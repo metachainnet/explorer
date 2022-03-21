@@ -373,6 +373,18 @@ block explorer
   }
 }
 
+.card-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+
+  > *:first-child {
+    flex: 1;
+  }
+}
+
 @media (max-width: 991px) {
   .block-explorer-wrapper {
     .block-explorer {

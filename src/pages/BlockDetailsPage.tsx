@@ -1,5 +1,3 @@
-import React from "react";
-
 import { ErrorCard } from "components/common/ErrorCard";
 import { BlockOverviewCard } from "components/block/BlockOverviewCard";
 
@@ -21,14 +19,22 @@ export function BlockDetailsPage({ slot, tab }: Props) {
   }
 
   return (
-    <div className="container mt-n3">
-      <div className="header">
-        <div className="header-body">
-          <h6 className="header-pretitle">Details</h6>
-          <h2 className="header-title">Block</h2>
+    <section className="block-explorer-section section bg-bottom">
+      <div className="container">
+        <div className="row">
+          <div className="col-lg-12">
+            <div className="center-heading">
+              <h2 className="section-title">Details for Block</h2>
+            </div>
+          </div>
+          <div className="offset-lg-3 col-lg-6">
+            <div className="center-text">
+              <p></p>
+            </div>
+          </div>
         </div>
+        {output}
       </div>
-      {output}
-    </div>
+    </section>
   );
 }

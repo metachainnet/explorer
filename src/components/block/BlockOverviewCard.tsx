@@ -1,17 +1,16 @@
-import React from "react";
-import { TableCardBody } from "components/common/TableCardBody";
-import { useBlock, useFetchBlock, FetchStatus } from "providers/block";
+import { BlockResponse } from "@solana/web3.js";
 import { ErrorCard } from "components/common/ErrorCard";
 import { LoadingCard } from "components/common/LoadingCard";
 import { Slot } from "components/common/Slot";
+import { FetchStatus, useBlock, useFetchBlock } from "providers/block";
 import { ClusterStatus, useCluster } from "providers/cluster";
-import { BlockHistoryCard } from "./BlockHistoryCard";
-import { BlockRewardsCard } from "./BlockRewardsCard";
-import { BlockResponse } from "@solana/web3.js";
+import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { clusterPath } from "utils/url";
-import { BlockProgramsCard } from "./BlockProgramsCard";
 import { BlockAccountsCard } from "./BlockAccountsCard";
+import { BlockHistoryCard } from "./BlockHistoryCard";
+import { BlockProgramsCard } from "./BlockProgramsCard";
+import { BlockRewardsCard } from "./BlockRewardsCard";
 
 export function BlockOverviewCard({
   slot,
@@ -26,7 +25,7 @@ export function BlockOverviewCard({
   const refresh = () => fetchBlock(slot);
 
   // Fetch block on load
-  React.useEffect(() => {
+  useEffect(() => {
     if (!confirmedBlock && status === ClusterStatus.Connected) refresh();
   }, [slot, status]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -46,50 +45,55 @@ export function BlockOverviewCard({
 
   return (
     <>
-      <div className="card">
-        <div className="card-header">
-          <h3 className="card-header-title mb-0 d-flex align-items-center">
-            Overview
-          </h3>
+      <div className="row m-bottom-70">
+        <div className="col-lg-12 col-md-12 col-sm-12">
+          <div className="table-responsive">
+            <table className="table table-striped table-latests table-detail">
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>Slot</strong>
+                  </td>
+                  <td>
+                    <Slot slot={slot} link />
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Blockhash</strong>
+                  </td>
+                  <td>{block.blockhash}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Parent Slot</strong>
+                  </td>
+                  <td>
+                    <Slot slot={block.parentSlot} link />
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Parent Blockhash</strong>
+                  </td>
+                  <td>{block.previousBlockhash}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Processed Transactions</strong>
+                  </td>
+                  <td>{block.transactions.length}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Successful Transactions</strong>
+                  </td>
+                  <td>{committedTxs.length}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <TableCardBody>
-          <tr>
-            <td className="w-100">Slot</td>
-            <td className="text-lg-right text-monospace">
-              <Slot slot={slot} />
-            </td>
-          </tr>
-          <tr>
-            <td className="w-100">Blockhash</td>
-            <td className="text-lg-right text-monospace">
-              <span>{block.blockhash}</span>
-            </td>
-          </tr>
-          <tr>
-            <td className="w-100">Parent Slot</td>
-            <td className="text-lg-right text-monospace">
-              <Slot slot={block.parentSlot} link />
-            </td>
-          </tr>
-          <tr>
-            <td className="w-100">Parent Blockhash</td>
-            <td className="text-lg-right text-monospace">
-              <span>{block.previousBlockhash}</span>
-            </td>
-          </tr>
-          <tr>
-            <td className="w-100">Processed Transactions</td>
-            <td className="text-lg-right text-monospace">
-              <span>{block.transactions.length}</span>
-            </td>
-          </tr>
-          <tr>
-            <td className="w-100">Successful Transactions</td>
-            <td className="text-lg-right text-monospace">
-              <span>{committedTxs.length}</span>
-            </td>
-          </tr>
-        </TableCardBody>
       </div>
 
       <MoreSection block={block} slot={slot} tab={tab} />
@@ -139,9 +143,18 @@ function MoreSection({
 }) {
   return (
     <>
-      <div className="container">
-        <div className="header">
-          <div className="header-body pt-0">
+      <div className="row">
+        <div className="col-lg-12">
+          <div className="center-heading">
+            <h2 className="section-title">
+              {(tab ?? "Transactions").substring(0, 1).toUpperCase() +
+                (tab ?? "Transactions").substring(1).toLowerCase()}
+            </h2>
+          </div>
+        </div>
+        <div className="offset-lg-3 col-lg-6">
+          <div className="center-text">
+            <p></p>
             <ul className="nav nav-tabs nav-overflow header-tabs">
               {TABS.map(({ title, slug, path }) => (
                 <li key={slug} className="nav-item">

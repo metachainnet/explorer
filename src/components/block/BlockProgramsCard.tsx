@@ -1,7 +1,5 @@
-import React from "react";
 import { BlockResponse, PublicKey } from "@solana/web3.js";
 import { Address } from "components/common/Address";
-import { TableCardBody } from "components/common/TableCardBody";
 
 export function BlockProgramsCard({ block }: { block: BlockResponse }) {
   const totalTransactions = block.transactions.length;
@@ -55,61 +53,65 @@ export function BlockProgramsCard({ block }: { block: BlockResponse }) {
 
   return (
     <>
-      <div className="card">
-        <div className="card-header align-items-center">
-          <h3 className="card-header-title">Block Program Stats</h3>
+      <div className="row">
+        <div className="col-lg-12">
+          <div className="table-responsive">
+            <table className="table table-latests caption-top">
+              <caption>Block Program Stats</caption>
+              <tbody>
+                <tr>
+                  <td className="w-100">Unique Programs Count</td>
+                  <td>{programEntries.length}</td>
+                </tr>
+                <tr>
+                  <td className="w-100">Total Instructions</td>
+                  <td>{totalInstructions}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <TableCardBody>
-          <tr>
-            <td className="w-100">Unique Programs Count</td>
-            <td className="text-lg-right text-monospace">
-              {programEntries.length}
-            </td>
-          </tr>
-          <tr>
-            <td className="w-100">Total Instructions</td>
-            <td className="text-lg-right text-monospace">
-              {totalInstructions}
-            </td>
-          </tr>
-        </TableCardBody>
       </div>
-      <div className="card">
-        <div className="card-header align-items-center">
-          <h3 className="card-header-title">Block Programs</h3>
-        </div>
 
-        <div className="table-responsive mb-0">
-          <table className="table table-sm table-nowrap card-table">
-            <thead>
-              <tr>
-                <th className="text-muted">Program</th>
-                <th className="text-muted">Transaction Count</th>
-                <th className="text-muted">% of Total</th>
-                <th className="text-muted">Instruction Count</th>
-                <th className="text-muted">% of Total</th>
-                <th className="text-muted">Success Rate</th>
-              </tr>
-            </thead>
-            <tbody>
-              {programEntries.map(([programId, txFreq]) => {
-                const ixFreq = ixFrequency.get(programId) as number;
-                const successes = txSuccesses.get(programId) || 0;
-                return (
-                  <tr key={programId}>
-                    <td>
-                      <Address pubkey={new PublicKey(programId)} link />
-                    </td>
-                    <td>{txFreq}</td>
-                    <td>{((100 * txFreq) / totalTransactions).toFixed(2)}%</td>
-                    <td>{ixFreq}</td>
-                    <td>{((100 * ixFreq) / totalInstructions).toFixed(2)}%</td>
-                    <td>{((100 * successes) / txFreq).toFixed(0)}%</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+      <div className="row">
+        <div className="col-lg-12">
+          <div className="table-responsive">
+            <table className="table table-striped table-latests caption-top">
+              <caption>Block Programs</caption>
+              <thead>
+                <tr>
+                  <th className="text-muted">Program</th>
+                  <th className="text-muted">Transaction Count</th>
+                  <th className="text-muted">% of Total</th>
+                  <th className="text-muted">Instruction Count</th>
+                  <th className="text-muted">% of Total</th>
+                  <th className="text-muted">Success Rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                {programEntries.map(([programId, txFreq]) => {
+                  const ixFreq = ixFrequency.get(programId) as number;
+                  const successes = txSuccesses.get(programId) || 0;
+                  return (
+                    <tr key={programId}>
+                      <td>
+                        <Address pubkey={new PublicKey(programId)} link />
+                      </td>
+                      <td>{txFreq}</td>
+                      <td>
+                        {((100 * txFreq) / totalTransactions).toFixed(2)}%
+                      </td>
+                      <td>{ixFreq}</td>
+                      <td>
+                        {((100 * ixFreq) / totalInstructions).toFixed(2)}%
+                      </td>
+                      <td>{((100 * successes) / txFreq).toFixed(0)}%</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </>

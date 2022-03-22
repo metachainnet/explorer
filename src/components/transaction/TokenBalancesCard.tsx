@@ -1,4 +1,3 @@
-import React from "react";
 import {
   ParsedMessageAccount,
   PublicKey,
@@ -11,6 +10,7 @@ import { BalanceDelta } from "components/common/BalanceDelta";
 import { SignatureProps } from "pages/TransactionDetailsPage";
 import { useTransactionDetails } from "providers/transactions";
 import { useTokenRegistry } from "providers/mints/token-registry";
+import StyledTable from "components/StyledTable";
 
 export type TokenBalanceRow = {
   account: PublicKey;
@@ -71,24 +71,11 @@ export function TokenBalancesCard({ signature }: SignatureProps) {
   });
 
   return (
-    <div className="card">
-      <div className="card-header">
-        <h3 className="card-header-title">Token Balances</h3>
-      </div>
-      <div className="table-responsive mb-0">
-        <table className="table table-sm table-nowrap card-table">
-          <thead>
-            <tr>
-              <th className="text-muted">Address</th>
-              <th className="text-muted">Token</th>
-              <th className="text-muted">Change</th>
-              <th className="text-muted">Post Balance</th>
-            </tr>
-          </thead>
-          <tbody className="list">{accountRows}</tbody>
-        </table>
-      </div>
-    </div>
+    <StyledTable
+      tableCaption="Token Balances"
+      tableHead={["Address", "Token", "Change", "Post Balanmce"]}
+      tableBody={accountRows}
+    />
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext, useState } from "react";
 import {
   TransactionInstruction,
   SignatureResult,
@@ -12,6 +12,7 @@ import {
   useRawTransactionDetails,
 } from "providers/transactions/raw";
 import { Address } from "components/common/Address";
+import StyledTable from "components/StyledTable";
 
 type InstructionProps = {
   title: string;
@@ -35,7 +36,7 @@ export function InstructionCard({
   childIndex,
 }: InstructionProps) {
   const [resultClass] = ixResult(result, index);
-  const [showRaw, setShowRaw] = React.useState(defaultRaw || false);
+  const [showRaw, setShowRaw] = useState(defaultRaw || false);
   const signature = useContext(SignatureContext);
   const rawDetails = useRawTransactionDetails(signature);
 
@@ -55,63 +56,62 @@ export function InstructionCard({
     return setShowRaw((r) => !r);
   };
 
-  return (
-    <div className="card">
-      <div className="card-header">
-        <h3 className="card-header-title mb-0 d-flex align-items-center">
-          <span className={`badge badge-soft-${resultClass} mr-2`}>
-            #{index + 1}
-            {childIndex !== undefined ? `.${childIndex + 1}` : ""}
-          </span>
-          {title}
-        </h3>
+  const cardHeader = (
+    <>
+      <h3 className="card-header-title mb-0 d-flex align-items-center">
+        <span className={`badge bg-${resultClass}`}>
+          #{index + 1}
+          {childIndex !== undefined ? `.${childIndex + 1}` : ""}
+        </span>
+        {title}
+      </h3>
 
-        <button
-          disabled={defaultRaw}
-          className={`btn btn-sm d-flex ${
-            showRaw ? "btn-black active" : "btn-white"
-          }`}
-          onClick={rawClickHandler}
-        >
-          <span className="fe fe-code mr-1"></span>
-          Raw
-        </button>
-      </div>
-      <div className="table-responsive mb-0">
-        <table className="table table-sm table-nowrap card-table">
-          <tbody className="list">
-            {showRaw ? (
-              <>
-                <tr>
-                  <td>Program</td>
-                  <td className="text-lg-right">
-                    <Address pubkey={ix.programId} alignRight link />
-                  </td>
-                </tr>
-                {"parsed" in ix ? (
-                  <RawParsedDetails ix={ix}>
-                    {raw ? <RawDetails ix={raw} /> : null}
-                  </RawParsedDetails>
-                ) : (
-                  <RawDetails ix={ix} />
-                )}
-              </>
-            ) : (
-              children
-            )}
-            {innerCards && innerCards.length > 0 && (
-              <tr>
-                <td colSpan={2}>
-                  Inner Instructions
-                  <div className="inner-cards">{innerCards}</div>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
+      <button
+        disabled={defaultRaw}
+        className={`btn btn-sm d-flex ${
+          showRaw ? "bg-black active" : "bg-white"
+        }`}
+        onClick={rawClickHandler}
+      >
+        <span className="fe fe-code mr-1"></span>
+        Raw
+      </button>
+    </>
   );
+
+  const tableBody = (
+    <>
+      {showRaw ? (
+        <>
+          <tr>
+            <td>Program</td>
+            <td className="text-end">
+              <Address pubkey={ix.programId} alignRight link />
+            </td>
+          </tr>
+          {"parsed" in ix ? (
+            <RawParsedDetails ix={ix}>
+              {raw ? <RawDetails ix={raw} /> : null}
+            </RawParsedDetails>
+          ) : (
+            <RawDetails ix={ix} />
+          )}
+        </>
+      ) : (
+        { children }
+      )}
+      {innerCards && innerCards.length > 0 && (
+        <tr>
+          <td colSpan={2}>
+            Inner Instructions
+            <div className="inner-cards">{innerCards}</div>
+          </td>
+        </tr>
+      )}
+    </>
+  );
+
+  return <StyledTable cardHeader={cardHeader} tableBody={tableBody} />;
 }
 
 function ixResult(result: SignatureResult, index: number) {

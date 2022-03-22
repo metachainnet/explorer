@@ -1,34 +1,34 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import bs58 from "bs58";
 import {
-  useFetchTransactionStatus,
-  useTransactionStatus,
-  useTransactionDetails,
-} from "providers/transactions";
-import { useFetchTransactionDetails } from "providers/transactions/parsed";
-import { useCluster, ClusterStatus } from "providers/cluster";
-import {
-  TransactionSignature,
-  SystemProgram,
   SystemInstruction,
+  SystemProgram,
+  TransactionSignature,
 } from "@solana/web3.js";
-import { SolBalance } from "utils";
-import { ErrorCard } from "components/common/ErrorCard";
-import { LoadingCard } from "components/common/LoadingCard";
-import { TableCardBody } from "components/common/TableCardBody";
-import { displayTimestamp } from "utils/date";
-import { InfoTooltip } from "components/common/InfoTooltip";
-import { Address } from "components/common/Address";
-import { Signature } from "components/common/Signature";
-import { intoTransactionInstruction } from "utils/tx";
-import { FetchStatus } from "providers/cache";
-import { Slot } from "components/common/Slot";
 import { BigNumber } from "bignumber.js";
+import bs58 from "bs58";
+import { Address } from "components/common/Address";
 import { BalanceDelta } from "components/common/BalanceDelta";
-import { TokenBalancesCard } from "components/transaction/TokenBalancesCard";
+import { ErrorCard } from "components/common/ErrorCard";
+import { InfoTooltip } from "components/common/InfoTooltip";
+import { LoadingCard } from "components/common/LoadingCard";
+import { Signature } from "components/common/Signature";
+import { Slot } from "components/common/Slot";
+import StyledTable from "components/StyledTable";
 import { InstructionsSection } from "components/transaction/InstructionsSection";
 import { ProgramLogSection } from "components/transaction/ProgramLogSection";
+import { TokenBalancesCard } from "components/transaction/TokenBalancesCard";
+import { FetchStatus } from "providers/cache";
+import { ClusterStatus, useCluster } from "providers/cluster";
+import {
+  useFetchTransactionStatus,
+  useTransactionDetails,
+  useTransactionStatus,
+} from "providers/transactions";
+import { useFetchTransactionDetails } from "providers/transactions/parsed";
+import { createContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { SolBalance } from "utils";
+import { displayTimestamp } from "utils/date";
+import { intoTransactionInstruction } from "utils/tx";
 import { clusterPath } from "utils/url";
 
 const AUTO_REFRESH_INTERVAL = 2000;
@@ -39,7 +39,7 @@ export type SignatureProps = {
   signature: TransactionSignature;
 };
 
-export const SignatureContext = React.createContext("");
+export const SignatureContext = createContext("");
 
 enum AutoRefresh {
   Active,
@@ -62,8 +62,7 @@ export function TransactionDetailsPage({ signature: raw }: SignatureProps) {
   } catch (err) {}
 
   const status = useTransactionStatus(signature);
-  const [zeroConfirmationRetries, setZeroConfirmationRetries] =
-    React.useState(0);
+  const [zeroConfirmationRetries, setZeroConfirmationRetries] = useState(0);
 
   let autoRefresh = AutoRefresh.Inactive;
 
@@ -73,7 +72,7 @@ export function TransactionDetailsPage({ signature: raw }: SignatureProps) {
     autoRefresh = AutoRefresh.Active;
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       status?.status === FetchStatus.Fetched &&
       status.data?.info &&
@@ -83,7 +82,7 @@ export function TransactionDetailsPage({ signature: raw }: SignatureProps) {
     }
   }, [status]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       status?.status === FetchStatus.Fetching &&
       autoRefresh === AutoRefresh.BailedOut
@@ -92,17 +91,25 @@ export function TransactionDetailsPage({ signature: raw }: SignatureProps) {
     }
   }, [status, autoRefresh, setZeroConfirmationRetries]);
 
+  if (signature === undefined) {
+    return <ErrorCard text={`Signature "${raw}" is not valid`} />;
+  }
+
   return (
-    <div className="container mt-n3">
-      <div className="header">
-        <div className="header-body">
-          <h6 className="header-pretitle">Details</h6>
-          <h2 className="header-title">Transaction</h2>
+    <section className="block-explorer-section section bg-bottom">
+      <div className="container">
+        <div className="row">
+          <div className="col-lg-12">
+            <div className="center-heading">
+              <h2 className="section-title">Details for Transaction</h2>
+            </div>
+          </div>
+          <div className="offset-lg-3 col-lg-6">
+            <div className="center-text">
+              <p></p>
+            </div>
+          </div>
         </div>
-      </div>
-      {signature === undefined ? (
-        <ErrorCard text={`Signature "${raw}" is not valid`} />
-      ) : (
         <SignatureContext.Provider value={signature}>
           <StatusCard signature={signature} autoRefresh={autoRefresh} />
           <AccountsCard signature={signature} autoRefresh={autoRefresh} />
@@ -110,8 +117,8 @@ export function TransactionDetailsPage({ signature: raw }: SignatureProps) {
           <InstructionsSection signature={signature} />
           <ProgramLogSection signature={signature} />
         </SignatureContext.Provider>
-      )}
-    </div>
+      </div>
+    </section>
   );
 }
 
@@ -125,14 +132,14 @@ function StatusCard({
   const { firstAvailableBlock, status: clusterStatus } = useCluster();
 
   // Fetch transaction on load
-  React.useEffect(() => {
+  useEffect(() => {
     if (!status && clusterStatus === ClusterStatus.Connected) {
       fetchStatus(signature);
     }
   }, [signature, clusterStatus]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Effect to set and clear interval for auto-refresh
-  React.useEffect(() => {
+  useEffect(() => {
     if (autoRefresh === AutoRefresh.Active) {
       let intervalHandle: NodeJS.Timeout = setInterval(
         () => fetchStatus(signature),
@@ -180,7 +187,7 @@ function StatusCard({
 
     return (
       <h3 className="mb-0">
-        <span className={`badge badge-soft-${statusClass}`}>{statusText}</span>
+        <span className={`badge bg-${statusClass}`}>{statusText}</span>
       </h3>
     );
   };
@@ -204,107 +211,109 @@ function StatusCard({
     );
   })();
 
-  return (
-    <div className="card">
-      <div className="card-header align-items-center">
-        <h3 className="card-header-title">Overview</h3>
-        <Link
-          to={clusterPath(`/tx/${signature}/inspect`)}
-          className="btn btn-white btn-sm mr-2"
+  const cardHeader = (
+    <>
+      <h3 className="card-header-title">Overview</h3>
+      <Link
+        to={clusterPath(`/tx/${signature}/inspect`)}
+        className="btn btn-white btn-sm btn-outline-dark"
+      >
+        <span className="fe fe-settings"></span>
+        Inspect
+      </Link>
+      {autoRefresh === AutoRefresh.Active ? (
+        <span className="spinner-grow spinner-grow-sm"></span>
+      ) : (
+        <button
+          className="btn btn-white btn-sm btn-outline-dark"
+          onClick={() => fetchStatus(signature)}
         >
-          <span className="fe fe-settings mr-2"></span>
-          Inspect
-        </Link>
-        {autoRefresh === AutoRefresh.Active ? (
-          <span className="spinner-grow spinner-grow-sm"></span>
-        ) : (
-          <button
-            className="btn btn-white btn-sm"
-            onClick={() => fetchStatus(signature)}
-          >
-            <span className="fe fe-refresh-cw mr-2"></span>
-            Refresh
-          </button>
-        )}
-      </div>
+          <span className="fe fe-refresh-cw"></span>
+          Refresh
+        </button>
+      )}
+    </>
+  );
 
-      <TableCardBody>
-        <tr>
-          <td>Signature</td>
-          <td className="text-lg-right">
-            <Signature signature={signature} alignRight />
-          </td>
-        </tr>
+  const tableBody = (
+    <>
+      <tr>
+        <td>Signature</td>
+        <td className="text-end">
+          <Signature signature={signature} alignRight />
+        </td>
+      </tr>
 
-        <tr>
-          <td>Result</td>
-          <td className="text-lg-right">{renderResult()}</td>
-        </tr>
+      <tr>
+        <td>Result</td>
+        <td className="text-end">{renderResult()}</td>
+      </tr>
 
+      <tr>
+        <td>Timestamp</td>
+        <td className="text-end">
+          {info.timestamp !== "unavailable" ? (
+            <span className="text-monospace">
+              {displayTimestamp(info.timestamp * 1000)}
+            </span>
+          ) : (
+            <InfoTooltip
+              bottom
+              right
+              text="Timestamps are only available for confirmed blocks"
+            >
+              Unavailable
+            </InfoTooltip>
+          )}
+        </td>
+      </tr>
+
+      <tr>
+        <td>Confirmation Status</td>
+        <td className="text-end text-uppercase">
+          {info.confirmationStatus || "Unknown"}
+        </td>
+      </tr>
+
+      <tr>
+        <td>Confirmations</td>
+        <td className="text-end text-uppercase">{info.confirmations}</td>
+      </tr>
+
+      <tr>
+        <td>Block</td>
+        <td className="text-end">
+          <Slot slot={info.slot} link />
+        </td>
+      </tr>
+
+      {blockhash && (
         <tr>
-          <td>Timestamp</td>
-          <td className="text-lg-right">
-            {info.timestamp !== "unavailable" ? (
-              <span className="text-monospace">
-                {displayTimestamp(info.timestamp * 1000)}
-              </span>
+          <td>
+            {isNonce ? (
+              "Nonce"
             ) : (
-              <InfoTooltip
-                bottom
-                right
-                text="Timestamps are only available for confirmed blocks"
-              >
-                Unavailable
+              <InfoTooltip text="Transactions use a previously confirmed blockhash as a nonce to prevent double spends">
+                Recent Blockhash
               </InfoTooltip>
             )}
           </td>
+          <td className="text-end">{blockhash}</td>
         </tr>
+      )}
 
+      {fee && (
         <tr>
-          <td>Confirmation Status</td>
-          <td className="text-lg-right text-uppercase">
-            {info.confirmationStatus || "Unknown"}
+          <td>Fee (SOL)</td>
+          <td className="text-end">
+            <SolBalance lamports={fee} />
           </td>
         </tr>
-
-        <tr>
-          <td>Confirmations</td>
-          <td className="text-lg-right text-uppercase">{info.confirmations}</td>
-        </tr>
-
-        <tr>
-          <td>Block</td>
-          <td className="text-lg-right">
-            <Slot slot={info.slot} link />
-          </td>
-        </tr>
-
-        {blockhash && (
-          <tr>
-            <td>
-              {isNonce ? (
-                "Nonce"
-              ) : (
-                <InfoTooltip text="Transactions use a previously confirmed blockhash as a nonce to prevent double spends">
-                  Recent Blockhash
-                </InfoTooltip>
-              )}
-            </td>
-            <td className="text-lg-right">{blockhash}</td>
-          </tr>
-        )}
-
-        {fee && (
-          <tr>
-            <td>Fee (SOL)</td>
-            <td className="text-lg-right">
-              <SolBalance lamports={fee} />
-            </td>
-          </tr>
-        )}
-      </TableCardBody>
-    </div>
+      )}
+    </>
   );
+
+  return <StyledTable cardHeader={cardHeader} tableBody={tableBody} />;
 }
 
 function AccountsCard({
@@ -321,7 +330,7 @@ function AccountsCard({
   const status = useTransactionStatus(signature);
 
   // Fetch details on load
-  React.useEffect(() => {
+  useEffect(() => {
     if (status?.data?.info?.confirmations === "max" && !details) {
       fetchDetails(signature);
     }
@@ -373,17 +382,11 @@ function AccountsCard({
           <SolBalance lamports={post} />
         </td>
         <td>
-          {index === 0 && (
-            <span className="badge badge-soft-info mr-1">Fee Payer</span>
-          )}
-          {account.writable && (
-            <span className="badge badge-soft-info mr-1">Writable</span>
-          )}
-          {account.signer && (
-            <span className="badge badge-soft-info mr-1">Signer</span>
-          )}
+          {index === 0 && <span className="badge bg-info">Fee Payer</span>}
+          {account.writable && <span className="badge bg-info">Writable</span>}
+          {account.signer && <span className="badge bg-info">Signer</span>}
           {message.instructions.find((ix) => ix.programId.equals(pubkey)) && (
-            <span className="badge badge-soft-info mr-1">Program</span>
+            <span className="badge bg-info">Program</span>
           )}
         </td>
       </tr>
@@ -391,24 +394,16 @@ function AccountsCard({
   });
 
   return (
-    <div className="card">
-      <div className="card-header">
-        <h3 className="card-header-title">Account Input(s)</h3>
-      </div>
-      <div className="table-responsive mb-0">
-        <table className="table table-sm table-nowrap card-table">
-          <thead>
-            <tr>
-              <th className="text-muted">#</th>
-              <th className="text-muted">Address</th>
-              <th className="text-muted">Change (SOL)</th>
-              <th className="text-muted">Post Balance (SOL)</th>
-              <th className="text-muted">Details</th>
-            </tr>
-          </thead>
-          <tbody className="list">{accountRows}</tbody>
-        </table>
-      </div>
-    </div>
+    <StyledTable
+      tableCaption="Accont Input(s)"
+      tableHead={[
+        "#",
+        "Address",
+        "Change (SOL)",
+        "Post Balance (SOL)",
+        "Details",
+      ]}
+      tableBody={accountRows}
+    />
   );
 }

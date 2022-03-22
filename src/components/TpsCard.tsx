@@ -10,6 +10,7 @@ import { PerformanceInfo } from "providers/stats/solanaPerformanceInfo";
 import React, { useRef } from "react";
 import { Bar } from "react-chartjs-2";
 import CountUp from "react-countup";
+import LiveClusterStatItem from "./LiveClusterStatItem";
 
 export function TpsCard() {
   return (
@@ -19,11 +20,6 @@ export function TpsCard() {
           <div className="center-heading">
             <h2 className="section-title">Live Transaction Stats</h2>
           </div>
-        </div>
-      </div>
-      <div className="offset-lg-3 col-lg-6">
-        <div className="center-text">
-          <p></p>
         </div>
       </div>
       <TpsCardBody />
@@ -178,45 +174,32 @@ function TpsBarChart({ performanceInfo }: TpsBarChartProps) {
   return (
     <>
       <div className="row">
-        <div className="col-lg-3 col-md-6 col-sm-6 col-12 position-relative">
-          <div className="item">
-            <div className="title">
-              <div className="icon"></div>
-              <h5>Transaction count</h5>
-            </div>
-            <div className="text">
-              <span>{transactionCount}</span>
-            </div>
-          </div>
-        </div>
-        <div className="col-lg-3 col-md-6 col-sm-6 col-12 position-relative">
-          <div className="item">
-            <div className="title">
-              <div className="icon"></div>
-              <h5>Transactions per second (TPS)</h5>
-            </div>
-            <div className="text">
-              <span>{averageTps}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+        <LiveClusterStatItem title={"Transaction count"}>
+          {transactionCount}
+        </LiveClusterStatItem>
 
+        <LiveClusterStatItem title={"Transactions per second (TPS)"}>
+          {averageTps}
+        </LiveClusterStatItem>
+      </div>
       <hr className="my-0" />
 
       <div className="card-body py-3">
-        <div className="align-box-row align-items-start justify-content-between">
+        <div className="align-items-start justify-content-between">
           <div className="d-flex justify-content-between w-100">
-            <span className="mb-0 font-size-sm">TPS history</span>
+            <span className="mb-0">TPS history</span>
 
-            <div className="font-size-sm">
+            <div>
               {SERIES.map((key) => (
                 <button
                   key={key}
                   onClick={() => setSeries(key)}
-                  className={classNames("btn btn-sm btn-white ml-2", {
-                    active: series === key,
-                  })}
+                  className={classNames(
+                    "btn btn-sm btn-outline-secondary ml-2",
+                    {
+                      active: series === key,
+                    }
+                  )}
                 >
                   {SERIES_INFO[key].interval}
                 </button>

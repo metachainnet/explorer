@@ -54,7 +54,7 @@ export function WelcomeArea() {
               <h1>Metachain Explorer</h1>
             </div>
             <div className="offset-lg-3 col-lg-6">
-              <p>Up To Block 1,883,224</p>
+              <p>Up To Block 114,137,160</p>
             </div>
           </div>
         </div>

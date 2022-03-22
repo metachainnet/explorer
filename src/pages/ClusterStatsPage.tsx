@@ -1,4 +1,5 @@
 import { Slot } from "components/common/Slot";
+import LiveClusterStatItem from "components/LiveClusterStatItem";
 import { TpsCard } from "components/TpsCard";
 import { useCluster } from "providers/cluster";
 import {
@@ -30,7 +31,6 @@ export function ClusterStatsPage() {
           </div>
         </div>
         <StatsCardBody />
-
         <TpsCard />
       </div>
     </section>
@@ -74,101 +74,40 @@ function StatsCardBody() {
   return (
     <>
       <div className="row">
-        <div className="col-lg-3 col-md-6 col-sm-6 col-12 position-relative">
-          <div className="item">
-            <div className="title">
-              <div className="icon"></div>
-              <h5>Slot</h5>
-            </div>
-            <div className="text">
-              <Slot slot={absoluteSlot} link />
-            </div>
-          </div>
-        </div>
+        <LiveClusterStatItem title={"Slot"}>
+          <Slot slot={absoluteSlot} link />
+        </LiveClusterStatItem>
         {blockHeight !== undefined && (
-          <div className="col-lg-3 col-md-6 col-sm-6 col-12 position-relative">
-            <div className="item">
-              <div className="title">
-                <div className="icon"></div>
-                <h5>Block height</h5>
-              </div>
-              <div className="text">
-                <Slot slot={blockHeight} />
-              </div>
-            </div>
-          </div>
+          <LiveClusterStatItem title={"Block height"}>
+            <Slot slot={blockHeight} />
+          </LiveClusterStatItem>
         )}
         {blockTime && (
-          <div className="col-lg-3 col-md-6 col-sm-6 col-12 position-relative">
-            <div className="item">
-              <div className="title">
-                <div className="icon"></div>
-                <h5>Cluster time</h5>
-              </div>
-              <div className="text">
-                <span>{displayTimestampUtc(blockTime)}</span>
-              </div>
-            </div>
-          </div>
+          <LiveClusterStatItem title={"Cluster time"}>
+            {displayTimestampUtc(blockTime)}
+          </LiveClusterStatItem>
         )}
-        <div className="col-lg-3 col-md-6 col-sm-6 col-12 position-relative">
-          <div className="item">
-            <div className="title">
-              <div className="icon"></div>
-              <h5>Slot time (1min average)</h5>
-            </div>
-            <div className="text">
-              <span>{averageSlotTime}ms</span>
-            </div>
-          </div>
-        </div>
+        <LiveClusterStatItem title={"Slot time (1min average)"}>
+          {averageSlotTime}ms
+        </LiveClusterStatItem>
       </div>
 
       <div className="row">
-        <div className="col-lg-3 col-md-6 col-sm-6 col-12 position-relative">
-          <div className="item">
-            <div className="title">
-              <div className="icon"></div>
-              <h5>Slot time (1hr average)</h5>
-            </div>
-            <div className="text">
-              <span>{hourlySlotTime}ms</span>
-            </div>
-          </div>
-        </div>
-        <div className="col-lg-3 col-md-6 col-sm-6 col-12 position-relative">
-          <div className="item">
-            <div className="title">
-              <div className="icon"></div>
-              <h5>Epoch</h5>
-            </div>
-            <div className="text">
-              <span>{currentEpoch}</span>
-            </div>
-          </div>
-        </div>
-        <div className="col-lg-3 col-md-6 col-sm-6 col-12 position-relative">
-          <div className="item">
-            <div className="title">
-              <div className="icon"></div>
-              <h5>Epoch progress</h5>
-            </div>
-            <div className="text">
-              <span>{epochProgress}</span>
-            </div>
-          </div>
-        </div>
-        <div className="col-lg-3 col-md-6 col-sm-6 col-12 position-relative">
-          <div className="item">
-            <div className="title">
-              <div className="icon"></div>
-              <h5>Epoch time remaining (approx.)</h5>
-            </div>
-            <div className="text">
-              <span>~{epochTimeRemaining}ms</span>
-            </div>
-          </div>
-        </div>
+        <LiveClusterStatItem title={"Slot time (1hr average)"}>
+          {hourlySlotTime}ms
+        </LiveClusterStatItem>
+
+        <LiveClusterStatItem title={"Epoch"}>
+          {currentEpoch}
+        </LiveClusterStatItem>
+
+        <LiveClusterStatItem title={"Epoch progress"}>
+          {epochProgress}
+        </LiveClusterStatItem>
+
+        <LiveClusterStatItem title={"Epoch time remaining (approx.)"}>
+          ~{epochTimeRemaining}ms
+        </LiveClusterStatItem>
       </div>
     </>
   );

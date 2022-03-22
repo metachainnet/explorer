@@ -205,23 +205,24 @@ export function ProgramLogSection({ signature }: SignatureProps) {
 
   return (
     <>
-      <div className="container">
-        <div className="header">
-          <div className="header-body">
-            <h3 className="card-header-title">Program Log</h3>
-          </div>
+      <div className="row m-bottom-70">
+        <div className="col-lg-12 col-md-12 col-sm-12">
+          <h3 className="card-header-title">Program Log</h3>
         </div>
-      </div>
-      <div className="card">
-        <ul className="log-messages">
-          {logMessages &&
-            logMessages.map((message, key) => (
-              <li key={key}>{message.replace(/^Program log: /, "")}</li>
-            ))}
-          {transactionError && (
-            <li className="mt-3">Transaction failed: {transactionError}</li>
-          )}
-        </ul>
+
+        <div className="table-responsive mb-0"></div>
+
+        <div className="card">
+          <ul className="log-messages">
+            {logMessages &&
+              logMessages.map((message, key) => (
+                <li key={key}>{message.replace(/^Program log: /, "")}</li>
+              ))}
+            {transactionError && (
+              <li className="mt-3">Transaction failed: {transactionError}</li>
+            )}
+          </ul>
+        </div>
       </div>
     </>
   );

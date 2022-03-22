@@ -327,6 +327,17 @@ block explorer
   }
 }
 
+@media (max-width: 991px) {
+  .block-explorer-wrapper {
+    .block-explorer {
+      position: relative;
+      -webkit-transform: translateY(0%) !important;
+      transform: translateY(0%) !important;
+      padding-top: 120px;
+    }
+  }
+}
+
 // custom
 #chartjs-tooltip {
   opacity: 1;
@@ -383,16 +394,5 @@ block explorer
 
   > *:first-child {
     flex: 1;
-  }
-}
-
-@media (max-width: 991px) {
-  .block-explorer-wrapper {
-    .block-explorer {
-      position: relative;
-      -webkit-transform: translateY(0%) !important;
-      transform: translateY(0%) !important;
-      padding-top: 120px;
-    }
   }
 }

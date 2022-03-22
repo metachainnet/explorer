@@ -3,9 +3,11 @@ import { TopAccountsCard } from "components/TopAccountsCard";
 
 export function SupplyPage() {
   return (
-    <div className="container mt-4">
-      <SupplyCard />
-      <TopAccountsCard />
-    </div>
+    <section className="block-explorer-features section bg-bottom">
+      <div className="container">
+        <SupplyCard />
+        <TopAccountsCard />
+      </div>
+    </section>
   );
 }

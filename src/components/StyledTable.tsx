@@ -47,7 +47,7 @@ export default function StyledTable({
               <thead>
                 <tr>
                   {tableHead.map((string, i) => (
-                    <th key={i} className="text-muted">
+                    <th key={i} className="text-muted text-center">
                       {string}
                     </th>
                   ))}

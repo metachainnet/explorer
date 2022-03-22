@@ -3,7 +3,6 @@ import { Link, NavLink } from "react-router-dom";
 import { clusterPath } from "utils/url";
 
 export function Navbar() {
-  // TODO KBT : Cluster Modal 연결
   return (
     <header className="header-area">
       <div className="container">
@@ -25,56 +24,23 @@ export function Navbar() {
                 />
               </Link>
 
-              {/* <div className="lang">
-                <div className="selected">
-                  <img src={LanguageIcon_EN} alt="Change Language To EN" />
-                  <i className="fa fa-angle-down"></i>
-                </div>
-                <ul className="flag-list">
-                  <li>
-                    <Link to={clusterPath("/")}>
-                      <img src={LanguageIcon_EN} alt="Change Language To EN" />
-                      <span>EN</span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to={clusterPath("/")}>
-                      <img src={LanguageIcon_RU} alt="Change Language To RU" />
-                      <span>RU</span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to={clusterPath("/")}>
-                      <img src={LanguageIcon_BR} alt="Change Language To BR" />
-                      <span>BR</span>
-                    </Link>
-                  </li>
-                </ul>
-              </div> */}
-
               <ul className="nav">
                 <li>
                   <NavLink to={clusterPath("/")} exact>
                     Home
                   </NavLink>
-                  {/* <a href="blue-block-explorer.html">BLOCKCHAIN HOME</a> */}
                 </li>
                 <li>
-                  <NavLink to={clusterPath("/supply")}>Blocks</NavLink>
+                  <NavLink to={clusterPath("/blocks")}>Blocks</NavLink>
                 </li>
                 <li>
-                  <NavLink to={clusterPath("/tx/inspector")}>
-                    Transactions
-                  </NavLink>
+                  <NavLink to={clusterPath("/txs")}>Transactions</NavLink>
                 </li>
                 <li>
-                  <NavLink to={clusterPath("/tx/inspector")}>Accounts</NavLink>
+                  <NavLink to={clusterPath("/accounts")}>Accounts</NavLink>
                 </li>
                 <li>
-                  <NavLink
-                    className="btn-nav-box"
-                    to={clusterPath("/tx/inspector")}
-                  >
+                  <NavLink className="btn-nav-box" to={"#"}>
                     Testnet
                   </NavLink>
                 </li>

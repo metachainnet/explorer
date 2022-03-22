@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { Location } from "history";
 import { AccountBalancePair } from "@solana/web3.js";
@@ -9,6 +8,8 @@ import { SolBalance } from "utils";
 import { useQuery } from "utils/url";
 import { useSupply } from "providers/supply";
 import { Address } from "./common/Address";
+import { useState } from "react";
+import StyledTable from "./StyledTable";
 
 type Filter = "circulating" | "nonCirculating" | "all" | null;
 
@@ -16,7 +17,7 @@ export function TopAccountsCard() {
   const supply = useSupply();
   const richList = useRichList();
   const fetchRichList = useFetchRichList();
-  const [showDropdown, setDropdown] = React.useState(false);
+  const [showDropdown, setDropdown] = useState(false);
   const filter = useQueryFilter();
 
   if (typeof supply !== "object") return null;
@@ -66,12 +67,10 @@ export function TopAccountsCard() {
         <div className="dropdown-exit" onClick={() => setDropdown(false)} />
       )}
 
-      <div className="card">
-        <div className="card-header">
-          <div className="row align-items-center">
-            <div className="col">
-              <h4 className="card-header-title">Largest Accounts</h4>
-            </div>
+      <StyledTable
+        cardHeader={
+          <>
+            <h4>Largest Accounts</h4>
 
             <div className="col-auto">
               <FilterDropdown
@@ -80,42 +79,29 @@ export function TopAccountsCard() {
                 show={showDropdown}
               />
             </div>
-          </div>
-        </div>
+          </>
+        }
+        tableHead={["Rank", "Address", "Balance (SOL)", "% of {header} Supply"]}
+        tableBody={
+          <>
+            {richList === Status.Idle && (
+              <div className="card-body">
+                <span
+                  className="btn btn-white ml-3 d-none d-md-inline"
+                  onClick={fetchRichList}
+                >
+                  Load Largest Accounts
+                </span>
+              </div>
+            )}
 
-        {richList === Status.Idle && (
-          <div className="card-body">
-            <span
-              className="btn btn-white ml-3 d-none d-md-inline"
-              onClick={fetchRichList}
-            >
-              Load Largest Accounts
-            </span>
-          </div>
-        )}
-
-        {accounts && (
-          <div className="table-responsive mb-0">
-            <table className="table table-sm table-nowrap card-table">
-              <thead>
-                <tr>
-                  <th className="text-muted">Rank</th>
-                  <th className="text-muted">Address</th>
-                  <th className="text-muted text-right">Balance (SOL)</th>
-                  <th className="text-muted text-right">
-                    % of {header} Supply
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="list">
-                {accounts.map((account, index) =>
-                  renderAccountRow(account, index, supplyCount)
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+            {accounts &&
+              accounts.map((account, index) =>
+                renderAccountRow(account, index, supplyCount)
+              )}
+          </>
+        }
+      />
     </>
   );
 }
@@ -128,18 +114,17 @@ const renderAccountRow = (
   return (
     <tr key={index}>
       <td>
-        <span className="badge badge-soft-gray badge-pill">{index + 1}</span>
+        <span className="badge bg-secondary rounded-pill">{index + 1}</span>
       </td>
       <td>
         <Address pubkey={account.address} link />
       </td>
-      <td className="text-right">
+      <td className="text-end">
         <SolBalance lamports={account.lamports} maximumFractionDigits={0} />
       </td>
-      <td className="text-right">{`${(
-        (100 * account.lamports) /
-        supply
-      ).toFixed(3)}%`}</td>
+      <td className="text-end">{`${((100 * account.lamports) / supply).toFixed(
+        3
+      )}%`}</td>
     </tr>
   );
 };

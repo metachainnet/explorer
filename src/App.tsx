@@ -5,6 +5,7 @@ import { BlockDetailsPage } from "pages/BlockDetailsPage";
 import { ClusterStatsPage } from "pages/ClusterStatsPage";
 import { SupplyPage } from "pages/SupplyPage";
 import { TransactionDetailsPage } from "pages/TransactionDetailsPage";
+import { TransactionListPage } from "pages/TransactionListPage";
 import { RouteComponentProps } from "react-router";
 import { Redirect, Route, Switch } from "react-router-dom";
 
@@ -15,6 +16,10 @@ function App() {
       <WelcomeArea />
 
       <Switch>
+        <Route exact path={"/txs"}>
+          <TransactionListPage />
+        </Route>
+
         <Route
           exact
           path={"/tx/:signature"}

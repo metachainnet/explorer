@@ -1,4 +1,3 @@
-import React from "react";
 import { ConfirmedSignatureInfo, TransactionError } from "@solana/web3.js";
 
 export type TransactionRow = {
@@ -21,10 +20,10 @@ export function HistoryCardHeader({
   fetching: boolean;
 }) {
   return (
-    <div className="card-header align-items-center">
-      <h3 className="card-header-title">{title}</h3>
+    <>
+      <h3>{title}</h3>
       <button
-        className="btn btn-white btn-sm"
+        className="btn btn-outline-dark btn-sm"
         disabled={fetching}
         onClick={() => refresh()}
       >
@@ -40,7 +39,7 @@ export function HistoryCardHeader({
           </>
         )}
       </button>
-    </div>
+    </>
   );
 }
 
@@ -54,26 +53,28 @@ export function HistoryCardFooter({
   loadMore: Function;
 }) {
   return (
-    <div className="card-footer">
-      {foundOldest ? (
-        <div className="text-muted text-center">Fetched full history</div>
-      ) : (
-        <button
-          className="btn btn-primary w-100"
-          onClick={() => loadMore()}
-          disabled={fetching}
-        >
-          {fetching ? (
-            <>
-              <span className="spinner-grow spinner-grow-sm mr-2"></span>
-              Loading
-            </>
-          ) : (
-            "Load More"
-          )}
-        </button>
-      )}
-    </div>
+    <tr>
+      <td colSpan={4}>
+        {foundOldest ? (
+          <div className="text-muted text-center">Fetched full history</div>
+        ) : (
+          <button
+            className="btn btn-primary w-100"
+            onClick={() => loadMore()}
+            disabled={fetching}
+          >
+            {fetching ? (
+              <>
+                <span className="spinner-grow spinner-grow-sm mr-2"></span>
+                Loading
+              </>
+            ) : (
+              "Load More"
+            )}
+          </button>
+        )}
+      </td>
+    </tr>
   );
 }
 

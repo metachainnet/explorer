@@ -1,14 +1,14 @@
-import { Link } from "react-router-dom";
-import { Location } from "history";
 import { AccountBalancePair } from "@solana/web3.js";
-import { useRichList, useFetchRichList, Status } from "providers/richList";
-import { LoadingCard } from "./common/LoadingCard";
-import { ErrorCard } from "./common/ErrorCard";
+import { Location } from "history";
+import { Status, useFetchRichList, useRichList } from "providers/richList";
+import { useSupply } from "providers/supply";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import { SolBalance } from "utils";
 import { useQuery } from "utils/url";
-import { useSupply } from "providers/supply";
 import { Address } from "./common/Address";
-import { useState } from "react";
+import { ErrorCard } from "./common/ErrorCard";
+import { LoadingCard } from "./common/LoadingCard";
 import StyledTable from "./StyledTable";
 
 type Filter = "circulating" | "nonCirculating" | "all" | null;
@@ -85,14 +85,16 @@ export function TopAccountsCard() {
         tableBody={
           <>
             {richList === Status.Idle && (
-              <div className="card-body">
-                <span
-                  className="btn btn-white ml-3 d-none d-md-inline"
-                  onClick={fetchRichList}
-                >
-                  Load Largest Accounts
-                </span>
-              </div>
+              <tr>
+                <td colSpan={4}>
+                  <span
+                    className="btn btn-white ml-3 d-none d-md-inline"
+                    onClick={fetchRichList}
+                  >
+                    Load Largest Accounts
+                  </span>
+                </td>
+              </tr>
             )}
 
             {accounts &&

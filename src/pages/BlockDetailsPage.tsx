@@ -8,15 +8,6 @@ type Props = { slot: string; tab?: string };
 
 export function BlockDetailsPage({ slot, tab }: Props) {
   const slotNumber = Number(slot);
-  let output = <ErrorCard text={`Block ${slot} is not valid`} />;
-
-  if (
-    !isNaN(slotNumber) &&
-    slotNumber < MAX_SAFE_INTEGER &&
-    slotNumber % 1 === 0
-  ) {
-    output = <BlockOverviewCard slot={slotNumber} tab={tab} />;
-  }
 
   return (
     <section className="block-explorer-section section bg-bottom">
@@ -27,13 +18,14 @@ export function BlockDetailsPage({ slot, tab }: Props) {
               <h2 className="section-title">Details for Block</h2>
             </div>
           </div>
-          <div className="offset-lg-3 col-lg-6">
-            <div className="center-text">
-              <p></p>
-            </div>
-          </div>
         </div>
-        {output}
+        {!isNaN(slotNumber) &&
+        slotNumber < MAX_SAFE_INTEGER &&
+        slotNumber % 1 === 0 ? (
+          <BlockOverviewCard slot={slotNumber} tab={tab} />
+        ) : (
+          <ErrorCard text={`Block ${slot} is not valid`} />
+        )}
       </div>
     </section>
   );

@@ -3,9 +3,9 @@ import { WelcomeArea } from "components/WelcomeArea";
 import { AccountDetailsPage } from "pages/AccountDetailsPage";
 import { BlockDetailsPage } from "pages/BlockDetailsPage";
 import { ClusterStatsPage } from "pages/ClusterStatsPage";
-import { TransactionInspectorPage } from "pages/inspector/InspectorPage";
 import { SupplyPage } from "pages/SupplyPage";
 import { TransactionDetailsPage } from "pages/TransactionDetailsPage";
+import { RouteComponentProps } from "react-router";
 import { Redirect, Route, Switch } from "react-router-dom";
 
 const ADDRESS_ALIASES = ["account", "accounts", "addresses"];
@@ -15,7 +15,6 @@ function App() {
   return (
     <>
       {/* <ClusterModal /> */}
-      {/* <Loading /> */}
       <Navbar />
 
       {/* 두 개 사용처 확인 */}
@@ -25,7 +24,7 @@ function App() {
       <WelcomeArea />
 
       <Switch>
-        <Route exact path={["/supply", "/accounts", "accounts/top"]}>
+        <Route exact path={["/accounts"]}>
           <SupplyPage />
         </Route>
 
@@ -40,16 +39,8 @@ function App() {
 
         <Route
           exact
-          path={["/tx/inspector", "/tx/:signature/inspect"]}
-          render={({ match }) => (
-            <TransactionInspectorPage signature={match.params.signature} />
-          )}
-        />
-
-        <Route
-          exact
           path={"/tx/:signature"}
-          render={({ match }) => (
+          render={({ match }: RouteComponentProps<any>) => (
             <TransactionDetailsPage signature={match.params.signature} />
           )}
         />
@@ -57,7 +48,7 @@ function App() {
         <Route
           exact
           path={["/block/:id", "/block/:id/:tab"]}
-          render={({ match }) => (
+          render={({ match }: RouteComponentProps<any>) => (
             <BlockDetailsPage slot={match.params.id} tab={match.params.tab} />
           )}
         />
@@ -80,7 +71,7 @@ function App() {
         <Route
           exact
           path={["/address/:address", "/address/:address/:tab"]}
-          render={({ match }) => (
+          render={({ match }: RouteComponentProps<any>) => (
             <AccountDetailsPage
               address={match.params.address}
               tab={match.params.tab}

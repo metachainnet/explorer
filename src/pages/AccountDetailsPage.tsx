@@ -1,4 +1,3 @@
-import React from "react";
 import { PublicKey } from "@solana/web3.js";
 import { CacheEntry, FetchStatus } from "providers/cache";
 import {
@@ -34,6 +33,7 @@ import { TransactionHistoryCard } from "components/account/history/TransactionHi
 import { TokenTransfersCard } from "components/account/history/TokenTransfersCard";
 import { TokenInstructionsCard } from "components/account/history/TokenInstructionsCard";
 import { RewardsCard } from "components/account/RewardsCard";
+import { useEffect } from "react";
 
 const IDENTICON_WIDTH = 64;
 
@@ -117,25 +117,24 @@ export function AccountDetailsPage({ address, tab }: Props) {
   } catch (err) {}
 
   // Fetch account on load
-  React.useEffect(() => {
+  useEffect(() => {
     if (!info && status === ClusterStatus.Connected && pubkey) {
       fetchAccount(pubkey);
     }
   }, [address, status]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="container mt-n3">
-      <div className="header">
-        <div className="header-body">
-          <AccountHeader address={address} info={info} />
-        </div>
+    <section className="block-explorer-section section bg-bottom">
+      <div className="container">
+        <AccountHeader address={address} info={info} />
+
+        {!pubkey ? (
+          <ErrorCard text={`Address "${address}" is not valid`} />
+        ) : (
+          <DetailsSections pubkey={pubkey} tab={tab} info={info} />
+        )}
       </div>
-      {!pubkey ? (
-        <ErrorCard text={`Address "${address}" is not valid`} />
-      ) : (
-        <DetailsSections pubkey={pubkey} tab={tab} info={info} />
-      )}
-    </div>
+    </section>
   );
 }
 
@@ -152,6 +151,7 @@ export function AccountHeader({
   const data = account?.details?.data;
   const isToken = data?.program === "spl-token" && data?.parsed.type === "mint";
 
+  // TODO KBT: 토큰 계정 디자인 적용 => 토큰 계정 찾아봐야 함..
   if (tokenDetails || isToken) {
     return (
       <div className="row align-items-end">
@@ -184,10 +184,13 @@ export function AccountHeader({
   }
 
   return (
-    <>
-      <h6 className="header-pretitle">Details</h6>
-      <h2 className="header-title">Account</h2>
-    </>
+    <div className="row">
+      <div className="col-lg-12">
+        <div className="center-heading">
+          <h2 className="section-title">Details for Account</h2>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -310,12 +313,17 @@ function MoreSection({
   const data = account?.details?.data;
   return (
     <>
-      <div className="container">
-        <div className="header">
-          <div className="header-body pt-0">
+      <div className="row">
+        <div className="col-lg-12">
+          <div className="center-heading">
+            <h2 className="section-title">More Info</h2>
+          </div>
+        </div>
+        <div className="offset-lg-3 col-lg-6">
+          <div className="center-text">
             <ul className="nav nav-tabs nav-overflow header-tabs">
               {tabs.map(({ title, slug, path }) => (
-                <li key={slug} className="nav-item">
+                <li key={slug} className="nav-item" style={{ flex: 1 }}>
                   <NavLink
                     className="nav-link"
                     to={clusterPath(`/address/${address}${path}`)}
@@ -329,6 +337,7 @@ function MoreSection({
           </div>
         </div>
       </div>
+
       {tab === "tokens" && (
         <>
           <OwnedTokensCard pubkey={pubkey} />

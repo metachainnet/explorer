@@ -1,4 +1,3 @@
-import React from "react";
 import { PublicKey } from "@solana/web3.js";
 import { FetchStatus } from "providers/cache";
 import {
@@ -15,6 +14,7 @@ import { Location } from "history";
 import { useTokenRegistry } from "providers/mints/token-registry";
 import { BigNumber } from "bignumber.js";
 import { Identicon } from "components/common/Identicon";
+import { useEffect, useState } from "react";
 
 type Display = "summary" | "detail" | null;
 
@@ -35,11 +35,11 @@ export function OwnedTokensCard({ pubkey }: { pubkey: PublicKey }) {
   const ownedTokens = useAccountOwnedTokens(address);
   const fetchAccountTokens = useFetchAccountOwnedTokens();
   const refresh = () => fetchAccountTokens(pubkey);
-  const [showDropdown, setDropdown] = React.useState(false);
+  const [showDropdown, setDropdown] = useState(false);
   const display = useQueryDisplay();
 
   // Fetch owned tokens
-  React.useEffect(() => {
+  useEffect(() => {
     if (!ownedTokens) refresh();
   }, [address]); // eslint-disable-line react-hooks/exhaustive-deps
 

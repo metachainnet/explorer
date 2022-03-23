@@ -13,6 +13,7 @@ import { Address } from "components/common/Address";
 import { useQuery } from "utils/url";
 import { useCluster } from "providers/cluster";
 import { displayAddress } from "utils/tx";
+import StyledTable from "components/StyledTable";
 
 const PAGE_SIZE = 25;
 
@@ -29,7 +30,13 @@ type TransactionWithInvocations = {
   invocations: Map<string, number>;
 };
 
-export function BlockHistoryCard({ block }: { block: BlockResponse }) {
+export function BlockHistoryCard({
+  block,
+  customTitle,
+}: {
+  block: BlockResponse;
+  customTitle?: string;
+}) {
   const [numDisplayed, setNumDisplayed] = useState(PAGE_SIZE);
   const [showDropdown, setDropdown] = useState(false);
   const filter = useQueryFilter();
@@ -105,107 +112,86 @@ export function BlockHistoryCard({ block }: { block: BlockResponse }) {
   }
 
   return (
-    <>
-      <div className="row">
-        <div className="col-lg-12">
-          <div className="card-header align-items-center">
-            <caption>{title}</caption>
-            <FilterDropdown
-              filter={filter}
-              toggle={() => setDropdown((show) => !show)}
-              show={showDropdown}
-              invokedPrograms={invokedPrograms}
-              totalTransactionCount={transactions.length}
-            />
-          </div>
-          <div className="table-responsive">
-            <table className="table table-striped table-latests">
-              <thead>
-                <tr>
-                  <th className="text-muted">#</th>
-                  <th className="text-muted">Result</th>
-                  <th className="text-muted">Transaction Signature</th>
-                  <th className="text-muted">Invoked Programs</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredTransactions.slice(0, numDisplayed).map((tx, i) => {
-                  let statusText;
-                  let statusClass;
-                  let signature: ReactNode;
-                  if (tx.meta?.err || !tx.signature) {
-                    statusClass = "warning";
-                    statusText = "Failed";
-                  } else {
-                    statusClass = "success";
-                    statusText = "Success";
+    <StyledTable
+      cardHeader={
+        <>
+          {customTitle ? <div>{customTitle}</div> : <div>{title}</div>}
+          <FilterDropdown
+            filter={filter}
+            toggle={() => setDropdown((show) => !show)}
+            show={showDropdown}
+            invokedPrograms={invokedPrograms}
+            totalTransactionCount={transactions.length}
+          />
+        </>
+      }
+      tableHead={["#", "Result", "Transaction Signature", "Invoked Programs"]}
+      tableBody={
+        <>
+          {filteredTransactions.slice(0, numDisplayed).map((tx, i) => {
+            let statusText;
+            let statusClass;
+            let signature: ReactNode;
+            if (tx.meta?.err || !tx.signature) {
+              statusClass = "warning";
+              statusText = "Failed";
+            } else {
+              statusClass = "success";
+              statusText = "Success";
+            }
+
+            if (tx.signature) {
+              signature = (
+                <Signature signature={tx.signature} link truncateChars={48} />
+              );
+            }
+
+            const entries = [...tx.invocations.entries()];
+            entries.sort();
+
+            return (
+              <tr key={i}>
+                <td>{tx.index + 1}</td>
+                <td>
+                  <span className={`badge bg-${statusClass}`}>
+                    {statusText}
+                  </span>
+                </td>
+
+                <td>{signature}</td>
+                <td>
+                  {tx.invocations.size === 0
+                    ? "NA"
+                    : entries.map(([programId, count], i) => {
+                        return (
+                          <div key={i} className="d-flex align-items-center">
+                            <Address pubkey={new PublicKey(programId)} link />
+                            <span className="ml-2 text-muted">{`(${count})`}</span>
+                          </div>
+                        );
+                      })}
+                </td>
+              </tr>
+            );
+          })}
+
+          {block.transactions.length > numDisplayed && (
+            <tr>
+              <td colSpan={5}>
+                <button
+                  className="btn btn-primary w-100"
+                  onClick={() =>
+                    setNumDisplayed((displayed) => displayed + PAGE_SIZE)
                   }
-
-                  if (tx.signature) {
-                    signature = (
-                      <Signature
-                        signature={tx.signature}
-                        link
-                        truncateChars={48}
-                      />
-                    );
-                  }
-
-                  const entries = [...tx.invocations.entries()];
-                  entries.sort();
-
-                  return (
-                    <tr key={i}>
-                      <td>{tx.index + 1}</td>
-                      <td>
-                        <span className={`badge bg-${statusClass}`}>
-                          {statusText}
-                        </span>
-                      </td>
-
-                      <td>{signature}</td>
-                      <td>
-                        {tx.invocations.size === 0
-                          ? "NA"
-                          : entries.map(([programId, count], i) => {
-                              return (
-                                <div
-                                  key={i}
-                                  className="d-flex align-items-center"
-                                >
-                                  <Address
-                                    pubkey={new PublicKey(programId)}
-                                    link
-                                  />
-                                  <span className="ml-2 text-muted">{`(${count})`}</span>
-                                </div>
-                              );
-                            })}
-                      </td>
-                    </tr>
-                  );
-                })}
-
-                {block.transactions.length > numDisplayed && (
-                  <tr>
-                    <td colSpan={5}>
-                      <button
-                        className="btn btn-primary w-100"
-                        onClick={() =>
-                          setNumDisplayed((displayed) => displayed + PAGE_SIZE)
-                        }
-                      >
-                        Load More
-                      </button>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </>
+                >
+                  Load More
+                </button>
+              </td>
+            </tr>
+          )}
+        </>
+      }
+    />
   );
 }
 

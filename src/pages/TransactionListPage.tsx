@@ -15,10 +15,8 @@ export function TransactionListPage() {
     epochInfo: { absoluteSlot },
   } = useDashboardInfo();
   const { setActive } = useStatsProvider();
-
   const confirmedBlock = useBlock(absoluteSlot);
   const fetchBlock = useFetchBlock();
-
   const refresh = () => fetchBlock(absoluteSlot);
 
   // 일단 한 번만 로딩하기
@@ -66,7 +64,7 @@ export function TransactionListPage() {
           </div>
         </div>
 
-        <BlockHistoryCard block={block} />
+        <BlockHistoryCard block={block} customTitle={"Transactions"} />
       </div>
     </section>
   );

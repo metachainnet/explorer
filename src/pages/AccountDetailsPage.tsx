@@ -245,6 +245,8 @@ function DetailsSections({
 function InfoSection({ account }: { account: Account }) {
   const data = account?.details?.data;
 
+  console.log(data);
+
   if (data && data.program === "bpf-upgradeable-loader") {
     return (
       <UpgradeableLoaderAccountSection

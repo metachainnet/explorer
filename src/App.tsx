@@ -2,6 +2,7 @@ import { Navbar } from "components/Navbar";
 import { WelcomeArea } from "components/WelcomeArea";
 import { AccountDetailsPage } from "pages/AccountDetailsPage";
 import { BlockDetailsPage } from "pages/BlockDetailsPage";
+import { BlockListPage } from "pages/BlockListPage";
 import { ClusterStatsPage } from "pages/ClusterStatsPage";
 import { SupplyPage } from "pages/SupplyPage";
 import { TransactionDetailsPage } from "pages/TransactionDetailsPage";
@@ -35,6 +36,10 @@ function App() {
             <BlockDetailsPage slot={match.params.id} tab={match.params.tab} />
           )}
         />
+
+        <Route exact path={"/blocks"}>
+          <BlockListPage></BlockListPage>
+        </Route>
 
         <Route exact path={["/accounts"]}>
           <SupplyPage />

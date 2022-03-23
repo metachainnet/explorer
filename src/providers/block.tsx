@@ -53,6 +53,17 @@ export function useBlock(key: number): Cache.CacheEntry<Block> | undefined {
 
   return context.entries[key];
 }
+export function useBlocks(
+  keys: number[]
+): Cache.CacheEntry<Block>[] | undefined {
+  const context = React.useContext(StateContext);
+
+  if (!context) {
+    throw new Error(`useBlock must be used within a BlockProvider`);
+  }
+
+  return keys.map((key) => context.entries[key]);
+}
 
 export async function fetchBlock(
   dispatch: Dispatch,

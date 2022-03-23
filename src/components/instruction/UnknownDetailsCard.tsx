@@ -1,8 +1,7 @@
-import React from "react";
 import {
-  TransactionInstruction,
-  SignatureResult,
   ParsedInstruction,
+  SignatureResult,
+  TransactionInstruction,
 } from "@solana/web3.js";
 import { InstructionCard } from "./InstructionCard";
 

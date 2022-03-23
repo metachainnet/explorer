@@ -211,109 +211,108 @@ function StatusCard({
     );
   })();
 
-  const cardHeader = (
-    <>
-      <h3 className="card-header-title">Overview</h3>
-      <Link
-        to={clusterPath(`/tx/${signature}/inspect`)}
-        className="btn btn-white btn-sm btn-outline-dark"
-      >
-        <span className="fe fe-settings"></span>
-        Inspect
-      </Link>
-      {autoRefresh === AutoRefresh.Active ? (
-        <span className="spinner-grow spinner-grow-sm"></span>
-      ) : (
-        <button
-          className="btn btn-white btn-sm btn-outline-dark"
-          onClick={() => fetchStatus(signature)}
-        >
-          <span className="fe fe-refresh-cw"></span>
-          Refresh
-        </button>
-      )}
-    </>
-  );
-
-  const tableBody = (
-    <>
-      <tr>
-        <td>Signature</td>
-        <td className="text-end">
-          <Signature signature={signature} alignRight />
-        </td>
-      </tr>
-
-      <tr>
-        <td>Result</td>
-        <td className="text-end">{renderResult()}</td>
-      </tr>
-
-      <tr>
-        <td>Timestamp</td>
-        <td className="text-end">
-          {info.timestamp !== "unavailable" ? (
-            <span className="text-monospace">
-              {displayTimestamp(info.timestamp * 1000)}
-            </span>
+  return (
+    <StyledTable
+      cardHeader={
+        <>
+          <h3 className="card-header-title">Overview</h3>
+          <Link
+            to={clusterPath(`/tx/${signature}/inspect`)}
+            className="btn btn-white btn-sm btn-outline-dark"
+          >
+            <span className="fe fe-settings"></span>
+            Inspect
+          </Link>
+          {autoRefresh === AutoRefresh.Active ? (
+            <span className="spinner-grow spinner-grow-sm"></span>
           ) : (
-            <InfoTooltip
-              bottom
-              right
-              text="Timestamps are only available for confirmed blocks"
+            <button
+              className="btn btn-white btn-sm btn-outline-dark"
+              onClick={() => fetchStatus(signature)}
             >
-              Unavailable
-            </InfoTooltip>
+              <span className="fe fe-refresh-cw"></span>
+              Refresh
+            </button>
           )}
-        </td>
-      </tr>
+        </>
+      }
+      tableBody={
+        <>
+          <tr>
+            <td>Signature</td>
+            <td className="text-end">
+              <Signature signature={signature} alignRight />
+            </td>
+          </tr>
 
-      <tr>
-        <td>Confirmation Status</td>
-        <td className="text-end text-uppercase">
-          {info.confirmationStatus || "Unknown"}
-        </td>
-      </tr>
+          <tr>
+            <td>Result</td>
+            <td className="text-end">{renderResult()}</td>
+          </tr>
 
-      <tr>
-        <td>Confirmations</td>
-        <td className="text-end text-uppercase">{info.confirmations}</td>
-      </tr>
+          <tr>
+            <td>Timestamp</td>
+            <td className="text-end">
+              {info.timestamp !== "unavailable" ? (
+                <span>{displayTimestamp(info.timestamp * 1000)}</span>
+              ) : (
+                <InfoTooltip
+                  bottom
+                  right
+                  text="Timestamps are only available for confirmed blocks"
+                >
+                  Unavailable
+                </InfoTooltip>
+              )}
+            </td>
+          </tr>
 
-      <tr>
-        <td>Block</td>
-        <td className="text-end">
-          <Slot slot={info.slot} link />
-        </td>
-      </tr>
+          <tr>
+            <td>Confirmation Status</td>
+            <td className="text-end text-uppercase">
+              {info.confirmationStatus || "Unknown"}
+            </td>
+          </tr>
 
-      {blockhash && (
-        <tr>
-          <td>
-            {isNonce ? (
-              "Nonce"
-            ) : (
-              <InfoTooltip text="Transactions use a previously confirmed blockhash as a nonce to prevent double spends">
-                Recent Blockhash
-              </InfoTooltip>
-            )}
-          </td>
-          <td className="text-end">{blockhash}</td>
-        </tr>
-      )}
+          <tr>
+            <td>Confirmations</td>
+            <td className="text-end text-uppercase">{info.confirmations}</td>
+          </tr>
 
-      {fee && (
-        <tr>
-          <td>Fee (SOL)</td>
-          <td className="text-end">
-            <SolBalance lamports={fee} />
-          </td>
-        </tr>
-      )}
-    </>
+          <tr>
+            <td>Block</td>
+            <td className="text-end">
+              <Slot slot={info.slot} link />
+            </td>
+          </tr>
+
+          {blockhash && (
+            <tr>
+              <td>
+                {isNonce ? (
+                  "Nonce"
+                ) : (
+                  <InfoTooltip text="Transactions use a previously confirmed blockhash as a nonce to prevent double spends">
+                    Recent Blockhash
+                  </InfoTooltip>
+                )}
+              </td>
+              <td className="text-end">{blockhash}</td>
+            </tr>
+          )}
+
+          {fee && (
+            <tr>
+              <td>Fee (SOL)</td>
+              <td className="text-end">
+                <SolBalance lamports={fee} />
+              </td>
+            </tr>
+          )}
+        </>
+      }
+    />
   );
-
-  return <StyledTable cardHeader={cardHeader} tableBody={tableBody} />;
 }
 
 function AccountsCard({

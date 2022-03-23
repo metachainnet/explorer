@@ -1,18 +1,18 @@
-import { useContext, useState } from "react";
 import {
-  TransactionInstruction,
-  SignatureResult,
   ParsedInstruction,
+  SignatureResult,
+  TransactionInstruction,
 } from "@solana/web3.js";
-import { RawDetails } from "./RawDetails";
-import { RawParsedDetails } from "./RawParsedDetails";
-import { SignatureContext } from "../../pages/TransactionDetailsPage";
+import { Address } from "components/common/Address";
+import StyledTable from "components/StyledTable";
 import {
   useFetchRawTransaction,
   useRawTransactionDetails,
 } from "providers/transactions/raw";
-import { Address } from "components/common/Address";
-import StyledTable from "components/StyledTable";
+import { useContext, useState } from "react";
+import { SignatureContext } from "../../pages/TransactionDetailsPage";
+import { RawDetails } from "./RawDetails";
+import { RawParsedDetails } from "./RawParsedDetails";
 
 type InstructionProps = {
   title: string;
@@ -56,62 +56,65 @@ export function InstructionCard({
     return setShowRaw((r) => !r);
   };
 
-  const cardHeader = (
-    <>
-      <h3 className="card-header-title mb-0 d-flex align-items-center">
-        <span className={`badge bg-${resultClass}`}>
-          #{index + 1}
-          {childIndex !== undefined ? `.${childIndex + 1}` : ""}
-        </span>
-        {title}
-      </h3>
+  console.log(innerCards);
 
-      <button
-        disabled={defaultRaw}
-        className={`btn btn-sm d-flex ${
-          showRaw ? "bg-black active" : "bg-white"
-        }`}
-        onClick={rawClickHandler}
-      >
-        <span className="fe fe-code mr-1"></span>
-        Raw
-      </button>
-    </>
-  );
-
-  const tableBody = (
-    <>
-      {showRaw ? (
+  return (
+    <StyledTable
+      cardHeader={
         <>
-          <tr>
-            <td>Program</td>
-            <td className="text-end">
-              <Address pubkey={ix.programId} alignRight link />
-            </td>
-          </tr>
-          {"parsed" in ix ? (
-            <RawParsedDetails ix={ix}>
-              {raw ? <RawDetails ix={raw} /> : null}
-            </RawParsedDetails>
+          <h3 className="card-header-title mb-0 d-flex align-items-center">
+            <span className={`badge bg-${resultClass}`}>
+              #{index + 1}
+              {childIndex !== undefined ? `.${childIndex + 1}` : ""}
+            </span>
+            {title}
+          </h3>
+
+          <button
+            disabled={defaultRaw}
+            className={`btn btn-sm d-flex ${
+              showRaw ? "bg-black active" : "bg-white"
+            }`}
+            onClick={rawClickHandler}
+          >
+            <span className="fe fe-code mr-1"></span>
+            Raw
+          </button>
+        </>
+      }
+      tableBody={
+        <>
+          {showRaw ? (
+            <>
+              <tr>
+                <td>Program</td>
+                <td className="text-end">
+                  <Address pubkey={ix.programId} alignRight link />
+                </td>
+              </tr>
+              {"parsed" in ix ? (
+                <RawParsedDetails ix={ix}>
+                  {raw ? <RawDetails ix={raw} /> : null}
+                </RawParsedDetails>
+              ) : (
+                <RawDetails ix={ix} />
+              )}
+            </>
           ) : (
-            <RawDetails ix={ix} />
+            children
+          )}
+          {innerCards && innerCards.length > 0 && (
+            <tr>
+              <td colSpan={2}>
+                Inner Instructions
+                <div className="inner-cards">{innerCards}</div>
+              </td>
+            </tr>
           )}
         </>
-      ) : (
-        { children }
-      )}
-      {innerCards && innerCards.length > 0 && (
-        <tr>
-          <td colSpan={2}>
-            Inner Instructions
-            <div className="inner-cards">{innerCards}</div>
-          </td>
-        </tr>
-      )}
-    </>
+      }
+    />
   );
-
-  return <StyledTable cardHeader={cardHeader} tableBody={tableBody} />;
 }
 
 function ixResult(result: SignatureResult, index: number) {

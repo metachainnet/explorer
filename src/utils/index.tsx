@@ -65,10 +65,7 @@ export function SolBalance({
 }) {
   return (
     <span>
-      ◎
-      <span className="text-monospace">
-        {lamportsToSolString(lamports, maximumFractionDigits)}
-      </span>
+      ◎<span>{lamportsToSolString(lamports, maximumFractionDigits)}</span>
     </span>
   );
 }

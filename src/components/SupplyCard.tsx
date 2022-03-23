@@ -31,14 +31,14 @@ export function SupplyCard() {
       tableBody={
         <>
           <tr>
-            <td className="w-100">Total Supply (SOL)</td>
+            <td className="w-100">Total Supply (MTC)</td>
             <td className="text-end">
               <SolBalance lamports={supply.total} maximumFractionDigits={0} />
             </td>
           </tr>
 
           <tr>
-            <td className="w-100">Circulating Supply (SOL)</td>
+            <td className="w-100">Circulating Supply (MTC)</td>
             <td className="text-end">
               <SolBalance
                 lamports={supply.circulating}
@@ -48,7 +48,7 @@ export function SupplyCard() {
           </tr>
 
           <tr>
-            <td className="w-100">Non-Circulating Supply (SOL)</td>
+            <td className="w-100">Non-Circulating Supply (MTC)</td>
             <td className="text-end">
               <SolBalance
                 lamports={supply.nonCirculating}

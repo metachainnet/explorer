@@ -8,35 +8,13 @@ import { TransactionDetailsPage } from "pages/TransactionDetailsPage";
 import { RouteComponentProps } from "react-router";
 import { Redirect, Route, Switch } from "react-router-dom";
 
-const ADDRESS_ALIASES = ["account", "accounts", "addresses"];
-const TX_ALIASES = ["txs", "txn", "txns", "transaction", "transactions"];
-
 function App() {
   return (
     <>
-      {/* <ClusterModal /> */}
       <Navbar />
-
-      {/* 두 개 사용처 확인 */}
-      {/* <MessageBanner /> */}
-      {/* <ClusterStatusBanner /> */}
-
       <WelcomeArea />
 
       <Switch>
-        <Route exact path={["/accounts"]}>
-          <SupplyPage />
-        </Route>
-
-        <Route
-          exact
-          path={TX_ALIASES.map((tx) => `/${tx}/:signature`)}
-          render={({ match, location }) => {
-            let pathname = `/tx/${match.params.signature}`;
-            return <Redirect to={{ ...location, pathname }} />;
-          }}
-        />
-
         <Route
           exact
           path={"/tx/:signature"}
@@ -53,20 +31,9 @@ function App() {
           )}
         />
 
-        <Route
-          exact
-          path={[
-            ...ADDRESS_ALIASES.map((path) => `/${path}/:address`),
-            ...ADDRESS_ALIASES.map((path) => `/${path}/:address/:tab`),
-          ]}
-          render={({ match, location }) => {
-            let pathname = `/address/${match.params.address}`;
-            if (match.params.tab) {
-              pathname += `/${match.params.tab}`;
-            }
-            return <Redirect to={{ ...location, pathname }} />;
-          }}
-        />
+        <Route exact path={["/accounts"]}>
+          <SupplyPage />
+        </Route>
 
         <Route
           exact

@@ -43,9 +43,30 @@ export function BlockListPage() {
     const error = dashboardInfo.status === ClusterStatsStatus.Error;
     return <StatsNotReady error={error} />;
   }
+
+  const loadMore = () => {
+    const [lastIdx] = blockList.slice(-1);
+    const blocks = Array(10)
+      .fill(lastIdx - 1)
+      .map((num, idx) => num - idx);
+    blocks.forEach((slot) => fetchBlock(slot));
+    setBlockList([...blockList, ...blocks]);
+  };
+
+  const refresh = () => setActive(true);
+
   return (
     <section className="block-explorer-features section bg-bottom">
       <div className="container">
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <button
+            className="btn btn-white btn-sm btn-outline-dark"
+            onClick={() => refresh()}
+          >
+            <span className="fe fe-refresh-cw"></span>
+            Refresh
+          </button>
+        </div>
         <StyledTable
           tableHead={["Block #", "Block hash", "Transactions", "Age"]}
           tableBody={
@@ -69,6 +90,13 @@ export function BlockListPage() {
             </>
           }
         />
+        <button
+          className="btn btn-primary w-100"
+          onClick={() => loadMore()}
+          disabled={absoluteSlot === 0}
+        >
+          Load More
+        </button>
       </div>
     </section>
   );

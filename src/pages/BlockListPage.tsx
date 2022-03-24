@@ -53,9 +53,20 @@ export function BlockListPage() {
     setBlockList([...blockList, ...blocks]);
   };
 
+  const refresh = () => setActive(true);
+
   return (
     <section className="block-explorer-features section bg-bottom">
       <div className="container">
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <button
+            className="btn btn-white btn-sm btn-outline-dark"
+            onClick={() => refresh()}
+          >
+            <span className="fe fe-refresh-cw"></span>
+            Refresh
+          </button>
+        </div>
         <StyledTable
           tableHead={["Block #", "Block hash", "Transactions", "Age"]}
           tableBody={

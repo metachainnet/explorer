@@ -43,6 +43,16 @@ export function BlockListPage() {
     const error = dashboardInfo.status === ClusterStatsStatus.Error;
     return <StatsNotReady error={error} />;
   }
+
+  const loadMore = () => {
+    const [lastIdx] = blockList.slice(-1);
+    const blocks = Array(10)
+      .fill(lastIdx - 1)
+      .map((num, idx) => num - idx);
+    blocks.forEach((slot) => fetchBlock(slot));
+    setBlockList([...blockList, ...blocks]);
+  };
+
   return (
     <section className="block-explorer-features section bg-bottom">
       <div className="container">
@@ -69,6 +79,13 @@ export function BlockListPage() {
             </>
           }
         />
+        <button
+          className="btn btn-primary w-100"
+          onClick={() => loadMore()}
+          disabled={absoluteSlot === 0}
+        >
+          Load More
+        </button>
       </div>
     </section>
   );

@@ -2,7 +2,11 @@ import { TokenInfoMap } from "@solana/spl-token-registry";
 import bs58 from "bs58";
 import { Cluster, useCluster } from "providers/cluster";
 import { useTokenRegistry } from "providers/mints/token-registry";
-import { useRef, useState } from "react";
+import {
+  useDashboardInfo,
+  useStatsProvider,
+} from "providers/stats/solanaClusterStats";
+import { useEffect, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import {
   ActionMeta,
@@ -27,7 +31,16 @@ export function WelcomeArea() {
   const history = useHistory();
   const location = useLocation();
   const { tokenRegistry } = useTokenRegistry();
+  const {
+    epochInfo: { absoluteSlot },
+  } = useDashboardInfo();
+  const { setActive } = useStatsProvider();
   const { cluster } = useCluster();
+
+  useEffect(() => {
+    setActive(true);
+    return () => setActive(false);
+  }, [setActive, cluster]);
 
   const onChange = (
     { pathname }: ValueType<any, false>,
@@ -54,7 +67,7 @@ export function WelcomeArea() {
               <h1>Metachain Explorer</h1>
             </div>
             <div className="offset-lg-3 col-lg-6">
-              <p>Up To Block 114,137,160</p>
+              <p>Up To Block {absoluteSlot.toLocaleString()}</p>
             </div>
           </div>
         </div>

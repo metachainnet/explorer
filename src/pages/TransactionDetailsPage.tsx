@@ -129,7 +129,7 @@ function StatusCard({
   const fetchStatus = useFetchTransactionStatus();
   const status = useTransactionStatus(signature);
   const details = useTransactionDetails(signature);
-  const { firstAvailableBlock, status: clusterStatus } = useCluster();
+  const { clusterInfo, status: clusterStatus } = useCluster();
 
   // Fetch transaction on load
   useEffect(() => {
@@ -163,12 +163,12 @@ function StatusCard({
       <ErrorCard retry={() => fetchStatus(signature)} text="Fetch Failed" />
     );
   } else if (!status.data?.info) {
-    if (firstAvailableBlock !== undefined && firstAvailableBlock > 1) {
+    if (clusterInfo && clusterInfo.firstAvailableBlock > 0) {
       return (
         <ErrorCard
           retry={() => fetchStatus(signature)}
           text="Not Found"
-          subtext={`Note: Transactions processed before block ${firstAvailableBlock} are not available at this time`}
+          subtext={`Note: Transactions processed before block ${clusterInfo.firstAvailableBlock} are not available at this time`}
         />
       );
     }

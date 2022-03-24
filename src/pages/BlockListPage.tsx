@@ -24,19 +24,18 @@ export function BlockListPage() {
   const fetchBlock = useFetchBlock();
 
   const [blockList, setBlockList] = useState<number[]>([]);
-  const { blockHeight, absoluteSlot } = dashboardInfo.epochInfo;
-
-  if (absoluteSlot !== 0) {
-    setActive(false);
-  }
+  const { absoluteSlot } = dashboardInfo.epochInfo;
 
   useEffect(() => {
+    if (absoluteSlot !== 0) {
+      setActive(false);
+    }
     const blocks = Array(10)
       .fill(absoluteSlot)
       .map((num, idx) => num - idx);
     blocks.map((slot) => fetchBlock(slot));
     setBlockList(blocks);
-  }, [absoluteSlot, fetchBlock]);
+  }, [absoluteSlot, fetchBlock, setActive]);
 
   const cacheBlocks = useBlocks(blockList);
 

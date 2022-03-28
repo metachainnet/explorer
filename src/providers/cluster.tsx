@@ -152,8 +152,6 @@ export function ClusterProvider({ children }: ClusterProviderProps) {
   const history = useHistory();
   const location = useLocation();
 
-  console.log(cluster, customUrl);
-
   // Remove customUrl param if dev setting is disabled
   React.useEffect(() => {
     if (!enableCustomUrl && query.has("customUrl")) {

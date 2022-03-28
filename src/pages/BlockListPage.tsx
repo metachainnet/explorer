@@ -58,23 +58,39 @@ export function BlockListPage() {
   return (
     <section className="block-explorer-features section bg-bottom">
       <div className="container">
-        <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <button
-            className="btn btn-white btn-sm btn-outline-dark"
-            onClick={() => refresh()}
-          >
-            <span className="fe fe-refresh-cw"></span>
-            Refresh
-          </button>
+        <div className="row">
+          <div className="col-lg-12">
+            <div className="center-heading">
+              <h2 className="section-title">Blocks</h2>
+            </div>
+          </div>
+          <div className="offset-lg-3 col-lg-6">
+            <div className="center-text">
+              <p></p>
+            </div>
+          </div>
         </div>
+
         <StyledTable
+          cardHeader={
+            <>
+              <div>Recent Blocks</div>
+              <button
+                className="btn btn-white btn-sm btn-outline-dark"
+                onClick={() => refresh()}
+              >
+                <span className="fe fe-refresh-cw"></span>
+                Refresh
+              </button>
+            </>
+          }
           tableHead={["Block #", "Block hash", "Transactions", "Age"]}
           tableBody={
             <>
               {cacheBlocks?.map((block, idx) => (
                 <tr key={idx}>
                   <td>
-                    <Slot slot={blockList[idx]} />
+                    <Slot slot={blockList[idx]} link />
                   </td>
                   <td>{block.data?.block?.blockhash || "Loading..."}</td>
                   <td>

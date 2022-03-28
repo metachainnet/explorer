@@ -1,19 +1,19 @@
-import { ReactNode, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { Location } from "history";
 import {
   BlockResponse,
   ConfirmedTransactionMeta,
-  TransactionSignature,
   PublicKey,
+  TransactionSignature,
 } from "@solana/web3.js";
+import { Address } from "components/common/Address";
 import { ErrorCard } from "components/common/ErrorCard";
 import { Signature } from "components/common/Signature";
-import { Address } from "components/common/Address";
-import { useQuery } from "utils/url";
-import { useCluster } from "providers/cluster";
-import { displayAddress } from "utils/tx";
 import StyledTable from "components/StyledTable";
+import { Location } from "history";
+import { useCluster } from "providers/cluster";
+import { ReactNode, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { displayAddress } from "utils/tx";
+import { useQuery } from "utils/url";
 
 const PAGE_SIZE = 25;
 
@@ -23,7 +23,7 @@ const useQueryFilter = (): string => {
   return filter || "";
 };
 
-type TransactionWithInvocations = {
+export type TransactionWithInvocations = {
   index: number;
   signature?: TransactionSignature;
   meta: ConfirmedTransactionMeta | null;

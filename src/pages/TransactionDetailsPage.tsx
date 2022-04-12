@@ -216,13 +216,6 @@ function StatusCard({
       cardHeader={
         <>
           <h3 className="card-header-title">Overview</h3>
-          <Link
-            to={clusterPath(`/tx/${signature}/inspect`)}
-            className="btn btn-white btn-sm btn-outline-dark"
-          >
-            <span className="fe fe-settings"></span>
-            Inspect
-          </Link>
           {autoRefresh === AutoRefresh.Active ? (
             <span className="spinner-grow spinner-grow-sm"></span>
           ) : (
@@ -303,7 +296,7 @@ function StatusCard({
 
           {fee && (
             <tr>
-              <td>Fee (SOL)</td>
+              <td>Fee (MTK)</td>
               <td className="text-end">
                 <SolBalance lamports={fee} />
               </td>
@@ -398,8 +391,8 @@ function AccountsCard({
       tableHead={[
         "#",
         "Address",
-        "Change (SOL)",
-        "Post Balance (SOL)",
+        "Change (MTK)",
+        "Post Balance (MTK)",
         "Details",
       ]}
       tableBody={accountRows}

@@ -37,9 +37,6 @@ export function Navbar() {
                   <NavLink to={clusterPath("/txs")}>Transactions</NavLink>
                 </li>
                 <li>
-                  <NavLink to={clusterPath("/accounts")}>Accounts</NavLink>
-                </li>
-                <li>
                   <NavLink className="btn-nav-box" to={"#"}>
                     Testnet
                   </NavLink>

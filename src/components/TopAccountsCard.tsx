@@ -81,7 +81,7 @@ export function TopAccountsCard() {
             </div>
           </>
         }
-        tableHead={["Rank", "Address", "Balance (SOL)", "% of {header} Supply"]}
+        tableHead={["Rank", "Address", "Balance (MTK)", "% of {header} Supply"]}
         tableBody={
           <>
             {richList === Status.Idle && (

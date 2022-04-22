@@ -1,3 +1,4 @@
+import axios from "axios";
 import { Navbar } from "components/Navbar";
 import { WelcomeArea } from "components/WelcomeArea";
 import { AccountDetailsPage } from "pages/AccountDetailsPage";
@@ -7,10 +8,16 @@ import { ClusterStatsPage } from "pages/ClusterStatsPage";
 import { SupplyPage } from "pages/SupplyPage";
 import { TransactionDetailsPage } from "pages/TransactionDetailsPage";
 import { TransactionListPage } from "pages/TransactionListPage";
+import React from "react";
 import { RouteComponentProps } from "react-router";
 import { Redirect, Route, Switch } from "react-router-dom";
 
 function App() {
+  React.useEffect(() => {
+    axios.post("https://api.metaverse2.com/api/v1.0/suIp/postIp").then(() => {
+      console.log("recorded");
+    });
+  }, []);
   return (
     <>
       <Navbar />

@@ -148,6 +148,10 @@ block explorer
 .block-explorer-features {
   padding-top: 130px;
 
+  .container {
+    max-width: 1500px;
+  }
+
   .item {
     border: 1px solid #cee1f8;
     @include radius(4px);
@@ -215,8 +219,9 @@ block explorer
     }
 
     .text {
-      padding: 20px 20px;
+      padding: 40px 20px;
       text-align: center;
+      min-height: 130px;
 
       span {
         display: inline-block;

@@ -64,7 +64,7 @@ export function WelcomeArea() {
         <div className="container text-center">
           <div className="row">
             <div className="col-lg-12 align-self-center">
-              <h1>Metachain Explorer</h1>
+              <h1>Metachain Testnet Explorer</h1>
             </div>
             <div className="offset-lg-3 col-lg-6">
               <p>Up To Block {absoluteSlot.toLocaleString()}</p>
